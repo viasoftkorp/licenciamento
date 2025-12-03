@@ -232,7 +232,7 @@ spec:
                         def attemptFailed = false
                         try {
                             timeout(time: 10, unit: 'MINUTES') {
-                                dir('.') {
+                                dir(REPOSITORY_NAME) {
                                     runShIfExists('./jenkins/pre-install-dependencies.sh')
                                     sh """
                                         dotnet --version
@@ -260,7 +260,7 @@ spec:
             if (! SKIP_JENKINS_BUILD) {
                 try {
                     timeout(time: 10, unit: 'MINUTES') {
-                        dir('.') {
+                        dir(REPOSITORY_NAME) {
                             sh "dotnet build --no-restore -c Release ${SERVICE_NAME}.sln $BUILD_ARGS"
                         }
                     }
@@ -275,7 +275,7 @@ spec:
             if (! SKIP_JENKINS_BUILD) {
                 try {
                     timeout(time: 10, unit: 'MINUTES') {
-                        dir('.') {
+                        dir(REPOSITORY_NAME) {
                             def testExist = sh (returnStdout: true, script: "dotnet test --no-restore --no-build --list-tests -c Release ${SERVICE_NAME}.sln").trim()
 
                             if (! testExist?.trim()) {
@@ -343,7 +343,7 @@ def generatePackages(String service_name, String version, List packages, String 
 
 	def packCommands = ""
 
-	dir('.') {
+	dir(REPOSITORY_NAME) {
 		echo "Building packages on version: ${version}"
 		for (int i = 0; i < packages.size(); i++) {
 			packCommands = packCommands + "dotnet pack -p:PackageVersion=" + version + " -c Release -o ./nugetPackages --no-build ${packages_folder}/" + packages[i] + "/" + packages[i] + ".csproj; "
