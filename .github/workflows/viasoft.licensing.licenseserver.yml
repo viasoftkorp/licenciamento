@@ -12,6 +12,8 @@ on:
       - '**'
     paths:
       - "viasoft.licensing.licenseserver/**"
+      
+  workflow_dispatch:
 
   pull_request:
     paths:
