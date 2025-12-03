@@ -63,6 +63,7 @@ def DOCKER_BUILDX_NAME = ""
 
 def COMMIT_HASH = ""
 
+def GITHUB_REPOSITORY_NAME = "licenciamento"
 def REPOSITORY_NAME = SERVICE_NAME.toLowerCase()
 
 // Inicializando variáveis
@@ -152,9 +153,12 @@ spec:
                             $class: 'GitSCM',
                             branches: scm.branches,
                             doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-                            extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
+                            extensions: [
+                                [$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: ''],
+                                [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: REPOSITORY_NAME]]],
+                            ],
                             userRemoteConfigs: [[
-                                url: "https://github.com/viasoftkorp/${REPOSITORY_NAME}.git",
+                                url: "https://github.com/viasoftkorp/${GITHUB_REPOSITORY_NAME}.git",
                                 credentialsId: "github-app-viasoftkorp"
                             ]],
                         ])
