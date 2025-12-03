@@ -153,7 +153,10 @@ spec:
                             branches: scm.branches,
                             doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
                             extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
-                            userRemoteConfigs: [[url: "git@github.com:viasoftkorp/${REPOSITORY_NAME}.git"]],
+                            userRemoteConfigs: [[
+                                url: "git@github.com:viasoftkorp/${REPOSITORY_NAME}.git",
+                                credentialsId: "github-app-viasoftkorp"
+                            ]],
                         ])
                         COMMIT_HASH = result.GIT_COMMIT
                         if (COMMIT_HASH != JENKINSFILE_COMMIT_HASH) {
