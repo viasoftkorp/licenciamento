@@ -1,0 +1,49 @@
+﻿{
+  "HttpPort": "1506",
+  "UrlGateway": "http://host.docker.internal:9999",
+  "AspNetCoreEnvironment": "Development",
+  "TenantLegacyDatabaseMapping": [
+    {
+      "TenantId": "ee19958d-5f6a-4201-b989-08d7468f1643",
+      "LicensedDatabases": ["30394"]
+    }
+  ],
+  "Serilog": {
+    "Using": [
+      "Serilog.Expressions",
+      "Sentry"
+    ],
+    "RequestLog": {
+      "OverrideDefault": true,
+      "MessageTemplate": "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms"
+    },
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft.AspNetCore": "Warning",
+        "Microsoft.EntityFrameworkCore": "Warning",
+        "Rebus": "Warning",
+        "Hangfire": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console"
+      },
+      {
+        "Name": "Sentry"
+      }
+    ],
+    "Filter": [
+      {
+        "Name": "ByExcluding",
+        "Args": {
+          "expression": "RequestPath like '/health'"
+        }
+      }
+    ],
+    "Enrich": [
+      "FromLogContext"
+    ]
+  }
+}

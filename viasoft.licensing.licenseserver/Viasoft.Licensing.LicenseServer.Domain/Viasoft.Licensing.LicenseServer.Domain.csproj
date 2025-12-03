@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">      
+      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5" />
+        <PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="2.1.2" />
+        <PackageReference Include="Viasoft.Core.DDD" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.DDD.Application" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.Mapper" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.ServiceBus" Version="4.12.40" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Viasoft.Licensing.LicenseServer.Shared\Viasoft.Licensing.LicenseServer.Shared.csproj" />
+    </ItemGroup>
+
+</Project>
