@@ -191,7 +191,7 @@ spec:
     
             // caso seja development ler arquivo version.yaml
             if (IS_DEV){
-                dir('.') {
+                dir(REPOSITORY_NAME) {
                     def majorVersion = readYaml file: "version.yaml"
                     def buildVersionFromYaml =  majorVersion['version']
 
