@@ -139,8 +139,12 @@ spec:
 
 
         stage('Initialize') {
-            def commitHashRegex = Jenkins.getInstance().getItemByFullName(env.JOB_NAME).getBuildByNumber(Integer.parseInt(env.BUILD_NUMBER)).logFile.text =~ /Obtained\sJenkinsfile\sfrom\s([A-f0-9]+)/
-            def JENKINSFILE_COMMIT_HASH = commitHashRegex[0][1]
+            // ERRO Gerado -> "Scripts not permitted to use staticMethod jenkins.model.Jenkins getInstance. Administrators can decide whether to approve or reject this signature." | Poderia ser aprovado, mas é um risco de segurança.
+            // def commitHashRegex = Jenkins.getInstance().getItemByFullName(env.JOB_NAME).getBuildByNumber(Integer.parseInt(env.BUILD_NUMBER)).logFile.text =~ /Obtained\sJenkinsfile\sfrom\s([A-f0-9]+)/
+            // def JENKINSFILE_COMMIT_HASH = commitHashRegex[0][1]
+
+            // Solução alternativa segura
+            def JENKINSFILE_COMMIT_HASH = env.GIT_COMMIT
             retry(3) {
                 try {
                     timeout(time: 5, unit: 'MINUTES') {
