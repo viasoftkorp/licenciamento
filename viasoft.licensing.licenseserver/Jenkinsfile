@@ -10,7 +10,6 @@ def SHOULD_GENERATE_PACKAGES = false // valor default
 def BUILD_ARGS = "/p:SkipAutoUpdate=true /p:AppCastUrl=https://cdn-connect.korp.com.br/license-server-updates/appcast.xml /p:AutoUpdatePublicKey={{ LS_UPDATE_KEY }} /p:Authority=https://gateway.korp.com.br/oauth /p:LicensingManagementSecret={{ LS_LICENSING_SECRET }} /p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }} "
 def CUSTOM_DOCKER_BUILD_ARGS = ""
 def SKIP_JENKINS_BUILD = false
-def PUBLISH_DIR = "./Viasoft.Licensing.LicenseServer.Host"
 def SERVICE_NAME = "Viasoft.Licensing.LicenseServer"
 
 def IS_PRD = false
@@ -65,6 +64,8 @@ def COMMIT_HASH = ""
 
 def GITHUB_REPOSITORY_NAME = "licenciamento"
 def REPOSITORY_NAME = SERVICE_NAME.toLowerCase()
+
+def PUBLISH_DIR = "./${REPOSITORY_NAME}/Viasoft.Licensing.LicenseServer.Host"
 
 // Inicializando variáveis
 def HAS_DOCKERFILE = false
