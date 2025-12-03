@@ -144,10 +144,10 @@ spec:
             // def JENKINSFILE_COMMIT_HASH = commitHashRegex[0][1]
 
             // Solução alternativa segura
-            def JENKINSFILE_COMMIT_HASH = env.GIT_COMMIT
+            def JENKINSFILE_COMMIT_HASH = env.GIT_COMMIT ?: checkout(scm).GIT_COMMIT
             retry(3) {
                 try {
-                    timeout(time: 5, unit: 'MINUTES') {
+                    timeout(time: 10, unit: 'MINUTES') {
                         def result = checkout([
                             $class: 'GitSCM',
                             branches: scm.branches,
