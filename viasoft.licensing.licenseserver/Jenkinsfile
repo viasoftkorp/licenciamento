@@ -1,32 +1,462 @@
-def publishProduction = true // Caso seu serviço não rode em produção, set para false
+// Packages: Nuget libraries
+// PACKAGES = ["<package1>", "<package2>"]
+// PACKAGES_FOLDER default "."
+def pkgArr = null
+def pkgFolderName = ""
+def PACKAGES = (pkgArr == null) ? [] : pkgArr
+def PACKAGES_FOLDER = (pkgFolderName == "") ? "." : pkgFolderName
+def SHOULD_GENERATE_PACKAGES = false // valor default
 
-def buildType = "csharp"
+def BUILD_ARGS = "/p:SkipAutoUpdate=true /p:AppCastUrl=https://cdn-connect.korp.com.br/license-server-updates/appcast.xml /p:AutoUpdatePublicKey={{ LS_UPDATE_KEY }} /p:Authority=https://gateway.korp.com.br/oauth /p:LicensingManagementSecret={{ LS_LICENSING_SECRET }} /p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }} "
+def CUSTOM_DOCKER_BUILD_ARGS = ""
+def SKIP_JENKINS_BUILD = false
+def PUBLISH_DIR = "./Viasoft.Licensing.LicenseServer.Host"
+def SERVICE_NAME = "Viasoft.Licensing.LicenseServer"
 
-def data = """ {
-    "serviceName": "${env.JOB_NAME.replaceFirst(/^([^\/]+?)\/.*$/, '$1')}",
-    "buildNumber": "${env.BUILD_NUMBER}",
-    "buildType": "${buildType}",
-    "branchName": "${env.BRANCH_NAME}",
-    "shouldPublishProduction": ${publishProduction},
-    "publishServerIp": "${env.IP_SERVICES_1_ARM}",
-    "secretsToImport": [
-        "LS_UPDATE_KEY",
-        "LS_LICENSING_SECRET",
-        "LS_CUSTOMER_SECRET"
-    ],
-    "buildArgs": [
-        "/p:SkipAutoUpdate=true",
-        "/p:AppCastUrl=https://cdn-connect.korp.com.br/license-server-updates/appcast.xml",
-        "/p:AutoUpdatePublicKey={{ LS_UPDATE_KEY }}",
-        "/p:Authority=https://gateway.korp.com.br/oauth",
-        "/p:LicensingManagementSecret={{ LS_LICENSING_SECRET }}",
-        "/p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }}"
-    ]
+def IS_PRD = false
+def IS_PR = false
+def IS_HMLG = false
+def IS_DEV = true
+
+def RELOAD_WITH_WATCHTOWER = false
+def RELOAD_WATCHTOWER_SERVERIPS = []
+def WATCHTOWER_TOKEN = ""
+
+def DOCKER_IMAGE_SUFFIX = ""
+
+def IS_LEGACY_VERSIONED = true
+
+def BUILD_VERSION = "0.0.0.0"
+def PUBLISH_VERSION = "0.0.0"
+def PACKAGE_VERSION = ""
+
+def SHOULD_PUBLISH = false
+def SHOULD_PUBLISH_PRODUCTION = true
+
+def PUBLISH_PROD_IMAGE_ON_RELEASE = false
+def PUBLISH_PLATFORM_ARM = true
+
+def JNLP_IMAGE_TAG = "1.0.4"
+
+def SECRETS_TO_IMPORT = """
+      - name: LS_UPDATE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: LS_UPDATE_KEY
+      - name: LS_LICENSING_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: LS_LICENSING_SECRET
+      - name: LS_CUSTOMER_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: LS_CUSTOMER_SECRET"""
+
+def RELOAD_SERVER_IPS = ["152.67.49.65"]
+def RELOAD_SERVER_PASS = ""
+def DOCKER_CREDENTIALS = "dockerhub"
+def DOCKER_ACCOUNT_NAME = "korp"
+def DOCKER_BUILDX_NAME = ""
+
+def COMMIT_HASH = ""
+
+def REPOSITORY_NAME = SERVICE_NAME.toLowerCase()
+
+// Inicializando variáveis
+def HAS_DOCKERFILE = false
+def HAS_ENTRYPOINT = false
+
+properties([disableConcurrentBuilds()])
+podTemplate(yaml: """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: 'korp/jnlp-csharp-build:${JNLP_IMAGE_TAG}'
+    env:
+      - name: SSH_PRIVATE
+        valueFrom:
+          secretKeyRef:
+            name: gitfetcher-private-key
+            key: PRIVATE_KEY
+      - name: AUX_ENVIRONMENT_WATCHTOWER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: AUX_ENVIRONMENT_WATCHTOWER_TOKEN
+      - name: DEV_ENVIRONMENT_WATCHTOWER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: DEV_ENVIRONMENT_WATCHTOWER_TOKEN
+      - name: HMLG_ENVIRONMENT_WATCHTOWER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: HMLG_ENVIRONMENT_WATCHTOWER_TOKEN
+      - name: PRODUCTION_WATCHTOWER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: jenkins-secret-credentials
+            key: PRODUCTION_WATCHTOWER_TOKEN
+      ${SECRETS_TO_IMPORT}
+    args: ["/init.sh", '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+    tty: true
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  volumes:
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock
+ """ ) {
+    node(POD_LABEL) {
+
+        if (IS_PRD) {
+            RELOAD_WATCHTOWER_SERVERIPS = RELOAD_SERVER_IPS
+            WATCHTOWER_TOKEN = PRODUCTION_WATCHTOWER_TOKEN
+            RELOAD_WITH_WATCHTOWER = false
+        }
+
+        if (IS_HMLG) {
+            DOCKER_IMAGE_SUFFIX = "-hmlg"
+            RELOAD_WATCHTOWER_SERVERIPS = [env.HMLG_ENVIRONMENT_IP]
+            WATCHTOWER_TOKEN = HMLG_ENVIRONMENT_WATCHTOWER_TOKEN
+            RELOAD_WITH_WATCHTOWER = true
+            SHOULD_GENERATE_PACKAGES = PACKAGES.size() > 0
+        }
+        if (IS_DEV) {
+            DOCKER_IMAGE_SUFFIX = "-dev"
+            RELOAD_WATCHTOWER_SERVERIPS = [env.DEV_ENVIRONMENT_IP]
+            WATCHTOWER_TOKEN = DEV_ENVIRONMENT_WATCHTOWER_TOKEN
+            RELOAD_WITH_WATCHTOWER = true
+            SHOULD_GENERATE_PACKAGES = PACKAGES.size() > 0
+        }
+
+
+        stage('Initialize') {
+            def commitHashRegex = Jenkins.getInstance().getItemByFullName(env.JOB_NAME).getBuildByNumber(Integer.parseInt(env.BUILD_NUMBER)).logFile.text =~ /Obtained\sJenkinsfile\sfrom\s([A-f0-9]+)/
+            def JENKINSFILE_COMMIT_HASH = commitHashRegex[0][1]
+            retry(3) {
+                try {
+                    timeout(time: 5, unit: 'MINUTES') {
+                        def result = checkout([
+                            $class: 'GitSCM',
+                            branches: scm.branches,
+                            doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                            extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
+                            userRemoteConfigs: [[url: "jenkins@git.korp.com.br:repos/${REPOSITORY_NAME}.git"]],
+                        ])
+                        COMMIT_HASH = result.GIT_COMMIT
+                        if (COMMIT_HASH != JENKINSFILE_COMMIT_HASH) {
+                            throw new Exception("O commit de checkout ($COMMIT_HASH) difere do commit da jenkinsfile ($JENKINSFILE_COMMIT_HASH)")
+                        }
+                    }
+                } catch (Exception err) {
+                      echo("Erro ao clonar repositório, tentando novamente em 10 segundos")
+                      sleep(10)
+                      error(err.getMessage())
+                }
+            }
+            echo "${SERVICE_NAME} Build Pipeline"
+
+            // Substitui {{ chave }} por ${chave} em 'BUILD_ARGS'
+            BUILD_ARGS = BUILD_ARGS.replaceAll(/\{\{\s*(\w+)\s*\}\}/, /\$\{$1\}/)
+
+            DOCKER_BUILDX_NAME = "multiarch_${POD_LABEL}"
+
+            HAS_DOCKERFILE = fileExists('jenkins/Dockerfile') 
+            if(HAS_DOCKERFILE){
+                sh "cp jenkins/Dockerfile ${PUBLISH_DIR}/"
+            }
+            HAS_ENTRYPOINT = fileExists('jenkins/entrypoint.sh') 
+            if(HAS_ENTRYPOINT){
+                sh "cp jenkins/entrypoint.sh ${PUBLISH_DIR}/"
+            }
+    
+            // caso seja development ler arquivo version.yaml
+            if (IS_DEV){
+                dir('.') {
+                    def majorVersion = readYaml file: "version.yaml"
+                    def buildVersionFromYaml =  majorVersion['version']
+
+                    PUBLISH_VERSION = buildVersionFromYaml.substring(0, buildVersionFromYaml.length() - 2)
+                    BUILD_VERSION = "${PUBLISH_VERSION}.${env.BUILD_NUMBER}"
+                    PACKAGE_VERSION = "${PUBLISH_VERSION}.0-preview.${env.BUILD_NUMBER}"
+
+                    if(BUILD_VERSION.tokenize('.').size() == 4){
+                        IS_LEGACY_VERSIONED = true
+                    } else {
+                        IS_LEGACY_VERSIONED = false
+                    }
+                }
+            }
+
+            if (IS_HMLG){
+                PACKAGE_VERSION = "${PUBLISH_VERSION}.${env.BUILD_NUMBER}"
+            }
+
+            if (IS_PRD){
+                def majorVersion = readYaml file: "version.yaml"
+                def buildVersionFromYaml =  majorVersion['version']
+
+                def publishVersionTemp = buildVersionFromYaml.substring(0, buildVersionFromYaml.length() - 2)
+
+                if (PUBLISH_VERSION != publishVersionTemp) {
+                    error("[FAILED]:A versão da tag (${PUBLISH_VERSION}) é diferente da versão do arquivo 'version.yaml' (${publishVersionTemp})")
+                }
+            }
+
+            printBuildInfo(SERVICE_NAME, REPOSITORY_NAME, IS_PRD, IS_PR, IS_HMLG, IS_DEV, IS_LEGACY_VERSIONED, BUILD_VERSION, PUBLISH_VERSION, PACKAGE_VERSION, RELOAD_SERVER_IPS, DOCKER_CREDENTIALS, DOCKER_ACCOUNT_NAME)
+        }
+
+        stage('Restore') {
+            if (! SKIP_JENKINS_BUILD) {
+                try {
+                    retry(3) {
+                        def attemptFailed = false
+                        try {
+                            timeout(time: 10, unit: 'MINUTES') {
+                                dir('.') {
+                                    runShIfExists('./jenkins/pre-install-dependencies.sh')
+                                    sh """
+                                        dotnet --version
+                                        dotnet restore ${SERVICE_NAME}.sln
+                                    """
+                                }
+                            }
+                        } catch (Exception e) {
+                            attemptFailed = true
+                            throw e
+                        } finally {
+                            if (attemptFailed) {
+                                sleep(60)
+                            }
+                        }
+                    }
+                } catch (Exception err) {
+                    cleanWS(DOCKER_BUILDX_NAME)
+                    error("[FAILED]: " + err.getMessage())
+                }
+            }
+        }
+
+        stage('Build') {
+            if (! SKIP_JENKINS_BUILD) {
+                try {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        dir('.') {
+                            sh "dotnet build --no-restore -c Release ${SERVICE_NAME}.sln $BUILD_ARGS"
+                        }
+                    }
+                } catch (Exception err) {
+                    cleanWS(DOCKER_BUILDX_NAME)
+                    error("[FAILED]: " + err.getMessage())
+                }
+            }
+        }
+
+        stage('Tests') {
+            if (! SKIP_JENKINS_BUILD) {
+                try {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        dir('.') {
+                            def testExist = sh (returnStdout: true, script: "dotnet test --no-restore --no-build --list-tests -c Release ${SERVICE_NAME}.sln").trim()
+
+                            if (! testExist?.trim()) {
+                                echo "Não existem testes para executar."
+                            } else {
+                                def command = sh (returnStatus: true, script: "dotnet test --no-restore --no-build -c Release ${SERVICE_NAME}.sln --test-adapter-path:. --logger:'xunit'")
+
+                                step([$class: 'XUnitPublisher', tools: [[$class: 'XUnitDotNetTestType', deleteOutputFiles: true, failIfNotNew: false, pattern: '**/TestResults/*.xml', skipNoTestFiles: false, stopProcessingIfError: true]]])
+
+                                if(command != 0) {
+                                    throw new Exception("Um ou mais testes falharam.")
+                                } else {
+                                    echo "Todos os testes foram concluídos com sucesso."
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception err) {
+                    cleanWS(DOCKER_BUILDX_NAME)
+                    error("[FAILED]: " + err.getMessage())
+                }
+            }
+        }
+
+        stage('Publish') {
+            try {
+                timeout(time: 10, unit: 'MINUTES') {
+                    if (! IS_PR) {
+                        dir(PUBLISH_DIR) {
+                            downloadDockerRelatedFiles(HAS_DOCKERFILE, HAS_ENTRYPOINT)
+                            
+                            sh "dotnet publish --no-restore --no-build -c Release $BUILD_ARGS"
+
+                            withDockerRegistry([credentialsId: DOCKER_CREDENTIALS, url: ""]) {
+                                publishDockerImage(SERVICE_NAME, REPOSITORY_NAME, CUSTOM_DOCKER_BUILD_ARGS, IS_HMLG, DOCKER_IMAGE_SUFFIX, BUILD_VERSION, PUBLISH_VERSION, PUBLISH_PROD_IMAGE_ON_RELEASE, PUBLISH_PLATFORM_ARM, DOCKER_ACCOUNT_NAME, DOCKER_BUILDX_NAME, COMMIT_HASH)
+                            }
+
+                            if(RELOAD_WITH_WATCHTOWER){
+                                for(def reload_ip_index=0; reload_ip_index<RELOAD_WATCHTOWER_SERVERIPS.size(); reload_ip_index++) {
+                                    reloadServiceWatchtower(RELOAD_WATCHTOWER_SERVERIPS[reload_ip_index], WATCHTOWER_TOKEN, REPOSITORY_NAME, DOCKER_ACCOUNT_NAME)
+                                }
+                                // reload QA-AUX
+                                if (IS_HMLG) {
+                                    reloadServiceWatchtower(env.HMLG_ANTERIOR_ENVIRONMENT_IP, HMLG_ENVIRONMENT_WATCHTOWER_TOKEN, REPOSITORY_NAME, DOCKER_ACCOUNT_NAME)
+                                    reloadServiceWatchtower(env.AUX_ENVIRONMENT_IP, AUX_ENVIRONMENT_WATCHTOWER_TOKEN, REPOSITORY_NAME, DOCKER_ACCOUNT_NAME)
+                                }
+                            }
+                        }
+                       if (SHOULD_GENERATE_PACKAGES) {
+                            generatePackages(SERVICE_NAME, PACKAGE_VERSION, PACKAGES, PACKAGES_FOLDER)
+                       }
+                    } else {
+                        echo "Branch is  ${env.BRANCH_NAME}, skipping deploy..."
+                    }
+                }
+            } catch (Exception err) {
+                cleanWS(DOCKER_BUILDX_NAME)
+                error("[FAILED]: " + err.getMessage())
+            }
+        }
+    }
 }
-"""
-request = httpRequest httpMode: 'POST',
-                        contentType: 'APPLICATION_JSON',
-                        requestBody: data,
-                        url: "${env.GENERATE_JENKINSFILE_URL_V2}",
-                        customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]]
-evaluate(request.content)
+
+def generatePackages(String service_name, String version, List packages, String packages_folder) {
+
+	def packCommands = ""
+
+	dir('.') {
+		echo "Building packages on version: ${version}"
+		for (int i = 0; i < packages.size(); i++) {
+			packCommands = packCommands + "dotnet pack -p:PackageVersion=" + version + " -c Release -o ./nugetPackages --no-build ${packages_folder}/" + packages[i] + "/" + packages[i] + ".csproj; "
+		}
+		sh(packCommands)
+
+
+        packCommands = ""
+
+        dir("nugetPackages") {
+            echo "Pushing packages on version: ${version}"
+            API_TOKEN_VARNAME = "PROGET_${service_name.toUpperCase().replace('.', '_')}_API_KEY"
+            for (int i = 0; i < packages.size(); i++) {
+                packCommands = packCommands + "dotnet nuget push ${packages[i]}.${version}.nupkg -k ${env[API_TOKEN_VARNAME]} -s https://proget.korp.com.br/nuget/${service_name}/; "
+            }
+
+            sh(packCommands)
+        }
+	}
+}
+
+def publishDockerImage(String service_name, String repository_name, String custom_docker_build_args, Boolean is_hmlg, String docker_image_suffix, String build_version, String publish_version, Boolean publish_prod_image_on_release, Boolean publish_platform_arm, String docker_account_name, String docker_buildx_name, String commit_hash) {
+    echo "starting publishDockerImage()"
+
+    sh(returnStdout: true, script: "docker buildx create --name ${docker_buildx_name} --bootstrap --use")
+
+    def platforms = '--platform linux/amd64'
+
+    if (publish_platform_arm) {
+        platforms = platforms + ',linux/arm64'
+    }
+
+    // concatenar em várias linhas precisa de uma aprovação específica no Jenkins, por isso fazemos o replace colocando por cima da variável
+    def tags = "-t ${docker_account_name}/${repository_name}:${publish_version}.x${docker_image_suffix} "
+    tags = tags + "-t ${docker_account_name}/${repository_name}:${build_version}${docker_image_suffix} "
+
+    if (publish_prod_image_on_release && is_hmlg) {
+        tags = tags + "-t ${docker_account_name}/${repository_name}:${publish_version}.x "
+        tags = tags + "-t ${docker_account_name}/${repository_name}:${build_version} "
+    }
+
+    def buildArgs = "--build-arg SERVICE_NAME=${service_name} --build-arg COMMIT_HASH=${commit_hash} --build-arg BUILD_VERSION=${build_version}"
+
+    def dockerCommand = "docker buildx build --push ${platforms} ${buildArgs} ${custom_docker_build_args} ${tags} ."
+
+    sh(returnStdout: true, script: dockerCommand)
+
+    removeDockerBuildx(docker_buildx_name)
+}
+
+def downloadDockerRelatedFiles(Boolean has_dockerfile, Boolean has_entrypoint) {
+        if(!has_dockerfile){
+            downloadFileWithRetry("${env.GATEWAY_URL}/jenkins/cdn/backend/v1/csharp/Dockerfile", "Dockerfile")
+        } 
+        if(!has_entrypoint) {
+            downloadFileWithRetry("${env.GATEWAY_URL}/jenkins/cdn/backend/v1/csharp/entrypoint.sh", "entrypoint.sh")
+        }
+    }
+
+def downloadFileWithRetry(String path, String filename) {
+    def i=0, okResponse = false, response
+    while(i<3 && !okResponse) {
+        response = httpRequest httpMode: 'GET', url: path, outputFile: filename, customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]], validResponseCodes: "100:599", quiet: true
+        if (response.getStatus() == 200){
+            return
+        }
+        sh "sleep 3"
+        i++
+    }
+    throw new Exception("Could not download file " + path)
+}
+
+def reloadServiceWatchtower(String server_ip, String token, String repository_name, String docker_account_name){
+    echo "starting reloadServiceWatchtower()"
+    def i=0, okResponse = false, response
+    def IMAGE_NAME = "${docker_account_name}/${repository_name}"
+    while(i<3 && !okResponse) {
+        response = httpRequest httpMode: 'POST', url: "http://${server_ip}:9022/v1/update?image=${IMAGE_NAME}", customHeaders: [[name: 'Authorization', value: "Bearer ${token}" ]], validResponseCodes: "100:599", quiet: true
+        if (response.getStatus() == 200){
+            okResponse = true
+        } else {
+            sh "sleep 3"
+            i++
+        }
+    }
+    if (! okResponse) {
+        throw new Exception("Unexpected response from WatchTower while updating ${IMAGE_NAME} \nStatus Code: ${response.getStatus()}")
+    }
+}
+
+def printBuildInfo(String service_name, String repository_name, Boolean is_prd, Boolean is_pr, Boolean is_hmlg, Boolean is_dev, Boolean is_legacy_versioned, String build_version, String publish_version, String package_version, ArrayList reload_server_ips, String docker_credentials, String docker_account_name) {
+    echo "SERVICE_NAME: ${service_name}"
+    echo "REPOSITORY_NAME: ${repository_name}"
+
+    echo "IS_PRD: ${is_prd}"
+    echo "IS_PR: ${is_pr}"
+    echo "IS_HMLG: ${is_hmlg}"
+    echo "IS_DEV: ${is_dev}"
+
+    echo "IS_LEGACY_VERSIONED: ${is_legacy_versioned}"
+
+    echo "BUILD_VERSION: ${build_version}"
+    echo "PUBLISH_VERSION: ${publish_version}"
+    echo "PACKAGE_VERSION: ${package_version}"
+
+    echo "RELOAD_SERVER_IPS: ${reload_server_ips}"
+    echo "DOCKER_CREDENTIALS: ${docker_credentials}"
+    echo "DOCKER_ACCOUNT_NAME: ${docker_account_name}"
+
+}
+
+def runShIfExists(String filePath) {
+    if (fileExists(filePath)) {
+        sh "chmod +x ${filePath}"
+        sh(filePath)
+    }
+}
+
+def removeDockerBuildx(String docker_buildx_name) {
+  // returnStatus: true para garantir que o builder seja removido, mesmo quando o build falha
+  sh(returnStatus: true, returnStdout: true, script: "docker buildx rm ${docker_buildx_name}")
+}
+
+def cleanWS(String docker_buildx_name) {
+    removeDockerBuildx(docker_buildx_name)
+    cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
+}
