@@ -80,11 +80,6 @@ spec:
   - name: jnlp
     image: 'korp/jnlp-csharp-build:${JNLP_IMAGE_TAG}'
     env:
-      - name: SSH_PRIVATE
-        valueFrom:
-          secretKeyRef:
-            name: gitfetcher-private-key
-            key: PRIVATE_KEY
       - name: AUX_ENVIRONMENT_WATCHTOWER_TOKEN
         valueFrom:
           secretKeyRef:
