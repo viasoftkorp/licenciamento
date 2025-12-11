@@ -1,0 +1,48 @@
+name: Build viasoft.licensing.licensingmanagement Service via Jenkins
+
+env:
+  SERVICE_NAME: "viasoft.licensing.licensingmanagement"
+
+on:
+  push:
+    branches:
+      - "master"
+      - "release/**"
+    paths:
+      - "viasoft.licensing.licensingmanagement/**"
+
+    tags:
+      - "viasoft.licensing.licensingmanagement-*"
+
+  pull_request:
+    paths:
+      - "viasoft.licensing.licensingmanagement/**"
+
+  workflow_dispatch:
+
+jobs:
+  start-jenkins-scan:
+    runs-on: self-hosted
+
+    steps:
+      - name: Print info
+        run: echo "Changes detected in ${{ env.SERVICE_NAME }} — Triggering Jenkins Scan."
+
+      - name: Scan Jenkins job
+        run: |
+          curl -X POST \
+            -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+            "${{ vars.JENKINS_BASE_URL }}job/${{ env.SERVICE_NAME }}/build"
+
+  start-jenkins-build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Print info
+        run: echo "Changes detected in ${{ env.SERVICE_NAME }} — Triggering Jenkins Build."
+
+      - name: Build Jenkins job
+        run: |
+          curl -X POST \
+            -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+            "${{ vars.JENKINS_BASE_URL }}job/${{ env.SERVICE_NAME }}/job/${{ github.ref_name }}/build"
