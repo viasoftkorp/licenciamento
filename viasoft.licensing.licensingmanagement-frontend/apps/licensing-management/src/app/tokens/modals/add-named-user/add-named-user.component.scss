@@ -1,0 +1,11 @@
+:host {
+    vs-dialog {
+        div[content] {
+            width: 50vw;
+        }
+
+        div[footer] {
+            margin-left: auto;
+        }
+    }
+}

@@ -1,0 +1,3 @@
+@use '@angular/material' as mat;
+@use "@viasoft/theming/config" as config;
+@include mat.menu-theme(config.$vs-theme);

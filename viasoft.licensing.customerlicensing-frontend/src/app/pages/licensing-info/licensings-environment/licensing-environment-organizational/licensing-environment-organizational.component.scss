@@ -1,0 +1,20 @@
+:host {
+  vs-grid{
+    display: flex;
+    max-width: 100%;
+  }
+
+  ::ng-deep {
+    div.content {
+      height: 100%;
+    }
+    vs-grid {
+      min-height: 100%;
+    }
+    vs-grid > p-table {
+      flex: auto;
+    }
+
+
+  }
+}

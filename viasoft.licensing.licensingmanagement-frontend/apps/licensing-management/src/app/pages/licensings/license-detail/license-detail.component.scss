@@ -1,0 +1,18 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  vs-tab-group {
+      flex-direction: column;
+  }
+  > vs-form {
+      flex: initial;
+  }
+  > vs-layout {
+      flex: auto;
+  }
+  vs-form {
+      div[content] {
+          padding-top: 8px;
+      }
+  }
+}

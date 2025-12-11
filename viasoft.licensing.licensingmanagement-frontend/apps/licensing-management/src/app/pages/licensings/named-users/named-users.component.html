@@ -1,0 +1,32 @@
+<vs-dialog>
+  <vs-icon
+    icon="user-tag"
+  ></vs-icon>
+  <vs-label
+    label="licensings.manageNamedUsersTitle"
+    classes="font-weight: 500;"
+    title
+  ></vs-label>
+
+  <div actions>
+    <vs-button
+      model="icon"
+      icon="user-plus"
+      tabIndex="-1"
+      (clickEvent)="add()"
+    ></vs-button>
+  </div>
+
+  <vs-label
+    info
+    model="small_title"
+  >
+  {{'licensings.manageNamedUsersSubTitle.intro' | translate}} <span style="font-weight: 600;">{{availableLicenses}}</span> {{'licensings.manageNamedUsersSubTitle.middle' | translate}} ({{'licensings.manageNamedUsersSubTitle.mode' | translate}} <span style="font-weight: 600;">{{licensingMode}}</span>).
+</vs-label>  
+  
+  <div content>
+    <vs-grid
+      [options]="grid"
+    ></vs-grid>
+  </div>
+</vs-dialog>

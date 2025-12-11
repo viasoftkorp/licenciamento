@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+@use "@viasoft/theming/config" as config;
+@import "@viasoft/theming/use-theme";
+
+@include useTheme();
+
+// TODO WORKAROUND: Height fixed for grids
+vs-grid.heigth-fixed {
+   flex: 1;
+   min-height: 300px;
+}
+
+.cdk-overlay-pane:not(.mat-mdc-tooltip-panel).vs-dialog-panel .mat-mdc-dialog-container {
+   min-width: unset;
+}
+
+.select-modal-content p-table {
+   width: 100%;
+}

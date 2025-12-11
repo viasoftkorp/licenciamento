@@ -1,0 +1,84 @@
+def hasApplication   = true              // OPCIONAL - default true
+def appIdentifier = "LS02" // OBRIGATÓRIO caso HasApplication seja `true`
+def appName          = "customer-licensing"       // OPCIONAL - default "ServiceName"
+def appBuildSuffix   = "-portal"         // OPCIONAL - default "-portal"
+def applicationFolder = "."               // OPCIONAL - default: "."
+
+def packages = """[]"""       // OPCIONAL - Lista com o nome de todos os pacotes
+def packagesFolder = "./libs"   // OPCIONAL - default "./libs"
+
+def jnlpImageTag = "1.1.x"
+/*
+// OPCIONAL - lista de objetos contendo as informações de todas as parcels
+
+// remover comentários caso projeto tenha parcels
+// caso usado, adicionar `"parcels": ${parcels},` ao json 'data'
+
+def parcels = """[{
+    "id": "",
+    "name": "",
+    "mainFile": ""
+}]
+"""
+*/
+
+def cloneMaxTime = 2           // OPCIONAL - default 2
+def installMaxTime = 10        // OPCIONAL - default 15
+def testMaxTime = 20           // OPCIONAL - default 20
+def buildMaxTime = 15          // OPCIONAL - default 20
+def publishMaxTime = 10        // OPCIONAL - default 10
+def buildPackagesMaxTime = 10  // OPCIONAL - default 10
+def publishPackagesMaxTime = 5 // OPCIONAL - default 5
+def buildParcelsMaxTime = 10   // OPCIONAL - default 10
+def publishParcelsMaxTime = 5  // OPCIONAL - default 5
+
+def skipTests = false            // OPCIONAL - default false
+def shouldLogEnvVariables = true // OPCIONAL - default false
+def shouldLogVersions = true     // OPCIONAL - default true
+
+def publishDevelopment = true // Caso seu serviço não seja publicado no portal interno, set para false
+def publishProduction  = true // Caso seu serviço não rode em produção, set para false
+
+def buildType = "frontend"
+
+def data = """ {
+    "serviceName": "${env.JOB_NAME.replaceFirst(/^([^\/]+?)\/.*$/, '$1')}",
+    "buildNumber": "${env.BUILD_NUMBER}",
+    "buildType": "${buildType}",
+    "branchName": "${env.BRANCH_NAME}",
+    "shouldPublishDevelopment": ${publishDevelopment},
+    "shouldPublishProduction": ${publishProduction},
+
+    "hasApplication": ${hasApplication},
+    "appIdentifier": "${appIdentifier}",
+    "appName": "${appName}",
+    "appBuildSuffix": "${appBuildSuffix}",
+    "applicationFolder": "${applicationFolder}",
+
+    "packages": ${packages},
+    "packagesFolder": "${packagesFolder}",
+
+    "cloneMaxTime": "${cloneMaxTime}",
+    "installMaxTime": "${installMaxTime}",
+    "testMaxTime": "${testMaxTime}",
+    "buildMaxTime": "${buildMaxTime}",
+    "publishMaxTime": "${publishMaxTime}",
+    "buildPackagesMaxTime": "${buildPackagesMaxTime}",
+    "publishPackagesMaxTime": "${publishPackagesMaxTime}",
+    "buildParcelsMaxTime": "${buildParcelsMaxTime}",
+    "publishParcelsMaxTime": "${publishParcelsMaxTime}",
+
+    "jnlpImageTag": "${jnlpImageTag}",
+
+    "skipTests": ${skipTests},
+    "shouldLogEnvVariables": ${shouldLogEnvVariables},
+    "shouldLogVersions": ${shouldLogVersions}
+}
+"""
+
+request = httpRequest httpMode: 'POST',
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: data,
+                        url: "${env.GENERATE_JENKINSFILE_URL_V2}",
+                        customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]]
+evaluate(request.content)

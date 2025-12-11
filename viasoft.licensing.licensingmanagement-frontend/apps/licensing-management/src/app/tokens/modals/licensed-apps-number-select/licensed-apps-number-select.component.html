@@ -1,0 +1,19 @@
+<vs-layout>
+  <div content>
+    <form [formGroup]="form" class="apps-number-select-form" *ngIf="form">
+      <vs-input
+        type="number"
+        formControlName="additionalNumberOfLicenses"
+        placeholder="licensings.additionalLicenses"
+        errorMessage="common.error.field_is_required"
+        [required]="true"
+      ></vs-input>
+    </form>
+  </div>
+
+  <div footer align-right>
+    <vs-button *ngIf="hasUpdatePermission" type="save" (clickEvent)="save()" [disabled]="!form.valid" label="common.save"></vs-button>
+    <vs-button type="cancel" (clickEvent)="cancel()" label="common.cancel"></vs-button>
+  </div>
+
+</vs-layout>

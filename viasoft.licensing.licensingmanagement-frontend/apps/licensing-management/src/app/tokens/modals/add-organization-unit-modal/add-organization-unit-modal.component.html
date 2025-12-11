@@ -1,0 +1,15 @@
+<vs-layout>
+  <vs-label title model="title" label="Organization.Unit.Title"></vs-label>
+  <div content>
+    <form *ngIf="form" [formGroup]="form">
+      <vs-input formControlName="name" placeholder="Organization.Unit.Fields.Name" [required]="true"></vs-input>
+      <vs-input formControlName="description" placeholder="Organization.Unit.Fields.Description"></vs-input>
+    </form>
+    <vs-label *ngIf="nameConflict" model="error" label="Organization.Unit.Errors.NameConflict"></vs-label>
+    <vs-label *ngIf="unknownError" model="error" label="Organization.Unit.Errors.Unknown"></vs-label>
+  </div>
+  <div footer align-right>
+    <vs-button type="save" label="common.save" [disabled]="!form || form.invalid" (clickEvent)="createOrUpdateUnit()"></vs-button>
+    <vs-button type="cancel" label="common.cancel" (clickEvent)="closeModal()"></vs-button>
+  </div>
+</vs-layout>

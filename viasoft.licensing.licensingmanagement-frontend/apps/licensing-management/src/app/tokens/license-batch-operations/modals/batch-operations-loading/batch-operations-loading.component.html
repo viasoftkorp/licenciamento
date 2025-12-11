@@ -1,0 +1,15 @@
+<vs-dialog>
+    <div content>
+        <vs-label *ngIf="loading" label="common.notification.apply_batch_operation" model="sub_title"></vs-label>
+        <div *ngIf="loading" class="spinner-box">
+            <vs-spinner *ngIf="loading" diameter="30"></vs-spinner>
+        </div>
+        <vs-label *ngIf="!showError && showEndMsg" label="common.notification.end_batch_operation" model="sub_title"></vs-label>
+        <vs-label *ngIf="showError && showEndMsg" label="common.error.error_apply_batch_operation" model="error"></vs-label>
+    </div>
+
+    <div footer align-right>
+        <vs-button type="cancel" *ngIf="!loading" (clickEvent)="close()" label="common.ok"></vs-button>
+    </div>
+
+</vs-dialog>

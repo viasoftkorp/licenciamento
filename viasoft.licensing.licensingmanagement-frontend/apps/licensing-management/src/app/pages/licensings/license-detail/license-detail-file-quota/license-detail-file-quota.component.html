@@ -1,0 +1,23 @@
+<vs-layout>
+  <div content class="form-container">
+    <div class="tenant-quota-form-container">
+      <div class="tenant-quota-form">
+        <app-file-provider-configuration *ngIf="hasFinishedFileConfigurationRequest"
+          [configuration]="fileProviderConfiguration" (formChange)="fileProviderFormChanged($event)"
+          placeholder="file_provider.form.tenantQuotaLimit">
+        </app-file-provider-configuration>
+        <div class="footer" *ngIf="hasFinishedFileConfigurationRequest">
+          <vs-button type="save" label="common.save" (clickEvent)="insertOrUpdateFileConfiguration()"
+            [disabled]="!form || form.invalid || form.pristine"></vs-button>
+        </div>
+      </div>
+      <div class="form-errors">
+        <vs-label *ngIf="fileConfigurationErrorDuringSave" model="error"
+          label="file_provider.form.errors.unknownErrorDuringSave"></vs-label>
+      </div>
+    </div>
+    <div class="grid-container">
+      <vs-grid [options]="gridOptions"></vs-grid>
+    </div>
+  </div>
+</vs-layout>

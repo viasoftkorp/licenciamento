@@ -1,0 +1,15 @@
+<vs-tabs-view-template>
+  <ng-container actions>
+    <vs-button
+      *ngIf="hasPermission"
+      model="icon"
+      icon="floppy-disk"
+      label="common.apply_batch_operations"
+      [disabled]="!requestBundle.hasItemSelected || !requestLicense.hasItemSelected"
+      (clickEvent)="save()"
+    />
+  </ng-container>
+
+  <app-bundle-grid-batch-operation />
+  <app-license-grid-batch-operation />
+</vs-tabs-view-template>

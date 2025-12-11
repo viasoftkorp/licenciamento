@@ -1,0 +1,23 @@
+def composeName = "compose-portal.yml"    // Nome do compose. Ex: "your-service.yml"
+
+def publishDevelopment = true // Caso seu serviço não seja publicado no portal interno, set para false
+def publishProduction  = true // Caso seu serviço não rode em produção, set para false
+
+def buildType = "csharp"
+
+def data = """ {
+    "serviceName": "${env.JOB_NAME.replaceFirst(/^([^\/]+?)\/.*$/, '$1')}",
+    "buildNumber": "${env.BUILD_NUMBER}",
+    "buildType": "${buildType}",
+    "branchName": "${env.BRANCH_NAME}",
+    "shouldPublishDevelopment": ${publishDevelopment},
+    "shouldPublishProduction": ${publishProduction},
+    "composeName": "${composeName}"
+}
+"""
+request = httpRequest httpMode: 'POST',
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: data,
+                        url: "${env.GENERATE_JENKINSFILE_URL_V2}",
+                        customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]]
+evaluate(request.content)

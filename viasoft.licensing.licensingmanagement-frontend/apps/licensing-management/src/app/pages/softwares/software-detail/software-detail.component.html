@@ -1,0 +1,15 @@
+<vs-dialog>
+  <div content>
+    <form [formGroup]="form" *ngIf="form" class="softwares-form">
+      <vs-input formControlName="name" placeholder="softwares.name" errorMessage="common.error.field_is_required" [required]="true">
+      </vs-input>
+      <vs-input formControlName="identifier" placeholder="softwares.identifier"
+        errorMessage="common.error.field_is_required" [required]="true"></vs-input>
+      <vs-checkbox formControlName="isActive">{{'softwares.active' | translate}}</vs-checkbox>
+    </form>
+  </div>
+
+  <div footer>
+    <vs-button *ngIf="!notShowSaveButton" type="save" label="common.save" (clickEvent)="save()" [disabled]="!validToSave"></vs-button>
+  </div>
+</vs-dialog>

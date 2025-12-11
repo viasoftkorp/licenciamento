@@ -1,0 +1,14 @@
+{
+  "clients": [
+    {
+      "name": "@viasoft/licensing-management",
+      "baseUrl": "http://192.168.100.195:14651/swagger/1.0.0.0/swagger.json",
+      "outPath": "apps/licensing-management/src/clients/licensing-management"
+    },
+    {
+      "name": "@viasoft/licensedtenant",
+      "baseUrl": "http://192.168.100.195:14651/swagger/1.0.0.0/swagger.json",
+      "outPath": "libs/licensing-licensingmanagement-licensedtenant/src/lib/clients/license-management"
+    }
+  ]
+}

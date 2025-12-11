@@ -1,0 +1,45 @@
+@import "@viasoft/theming/mixins/breakpoint";
+
+:host {
+  ::ng-deep {
+    form {
+      flex-direction: column;
+      height: 100%;
+
+      .flex-initial {
+        flex: initial;
+
+        .flex {
+          display: flex;
+          gap: 1rem;
+        }
+      }
+
+      /* TODOs: componente vs-textarea por default não permitiu que ocupasse 100% do
+      //espaço disponível (ultrapassava as medidas do componente pai) */
+      vs-textarea {
+        flex: auto;
+
+        mat-form-field,
+        div.mat-mdc-form-field-flex div.mat-mdc-form-field-infix textarea.mat-mdc-input-element,
+        div.mat-mdc-text-field-wrapper,
+        div.mat-mdc-form-field-flex,
+        div.mat-mdc-form-field-infix {
+          height: 100%;
+        }
+      }
+
+      @include breakpoint('xs') {
+        .flex-initial .flex {
+          flex-direction: column;
+          gap: unset;
+        }
+      }
+    }
+
+    vs-input .mat-mdc-input-element:disabled {
+      color: #2d323e;
+    }
+  }
+}
+

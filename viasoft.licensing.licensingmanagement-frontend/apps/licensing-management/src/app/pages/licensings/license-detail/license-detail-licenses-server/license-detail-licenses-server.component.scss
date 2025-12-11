@@ -1,0 +1,39 @@
+:host {
+  .template-radio {
+    display: flex;
+    align-items: center;
+  }
+
+  &::ng-deep {
+    vs-layout {
+      height: 100%;
+
+      div[content] {
+        vs-form {
+          display: flex;
+          flex-direction: row;
+          padding-left: 16px;
+          flex: none;
+          margin-bottom: 7px;
+
+          vs-button .vs-button-style-icon vs-icon {
+            padding: 0;
+          }
+
+          vs-checkbox {
+            display: flex;
+            place-items: center;
+
+            mat-checkbox {
+              margin: 0;
+
+              .mdc-label {
+                font-size: 13px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

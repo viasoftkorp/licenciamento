@@ -1,0 +1,51 @@
+@import '@viasoft/theming/mixins/breakpoint';
+
+:host {
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    min-width: 450px;
+    > vs-input {
+      max-width: 500px;
+    }
+  }
+
+  .version-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    vs-select {
+      max-width: 300px;
+      flex: auto;
+    }
+
+    ::ng-deep {
+      .copy-button {
+        text-align: left;
+        max-width: 210px;
+        height: 50px;
+        margin-left: 1rem;
+        button > span {
+          display: flex;
+          align-items: center;
+          white-space: break-spaces;
+          line-height: 1rem;
+        }
+      }
+    }
+  }
+
+  @include breakpoint(xs) {
+    form {
+      min-width: unset;
+      max-width: unset;
+    }
+  }
+}

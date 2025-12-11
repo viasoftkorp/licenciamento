@@ -1,0 +1,15 @@
+:host {
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+
+    .grid-container {
+        display: flex;
+        flex: auto;
+        overflow: hidden;
+        height: 300px;
+        > vs-grid {
+            flex: auto;
+        }
+    }
+}

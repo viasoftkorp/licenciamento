@@ -1,0 +1,41 @@
+:host {
+    display: flex;
+    flex: 1 1 auto;
+    .container {
+        padding: 0 1rem;
+        .title-container {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .licensing {
+            margin: 12px 0 12px;
+            flex-direction: row;
+            display: flex;
+            flex-flow: row wrap;
+            gap: 20px;
+        }
+        .icon-label {
+            display: flex;
+            flex-flow: row;
+            gap: 8px;
+        }
+        .bold {
+            font-weight: 600;
+        }
+        .box {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding-bottom: 8px;
+        }
+        .used-licences {
+            width: 250px; 
+        }
+        .offset {
+            margin-right: 2rem;
+        }
+    }
+}

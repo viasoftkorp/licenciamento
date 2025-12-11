@@ -1,0 +1,18 @@
+
+<vs-layout>
+  <vs-icon icon="database"></vs-icon>
+  <vs-label title label="Environment.Organization.Units"></vs-label>
+  <div content>
+    <vs-grid *ngIf="loaded" [options]="unitGridOptions" ></vs-grid>
+  </div>
+</vs-layout>
+
+<vs-layout>
+  <vs-icon icon="database"></vs-icon>
+  <vs-label title [label]="currentUnitName"></vs-label>
+  <div content>
+    <vs-no-result *ngIf="!hasUnitSelected" message="Environment.Environment.SelectAnUnitToViewEnvironments"></vs-no-result>
+    <vs-grid *ngIf="canShowUnitEnvironment" [options]="environmentGridOptions"></vs-grid>
+  </div>
+</vs-layout>
+

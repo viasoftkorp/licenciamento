@@ -1,0 +1,50 @@
+<vs-dialog>
+  <div content>
+    <form [formGroup]="form" class="apps-form" *ngIf="form">
+      <vs-input
+        formControlName="name"
+        placeholder="apps.name"
+        errorMessage="common.error.field_is_required"
+        [required]="true"
+      />
+
+      <vs-autocomplete-select
+        formControlName="domain"
+        placeholder="apps.domains.domain"
+        [required]="true"
+        [get]="autocompleteGet"
+        [getName]="getName"
+        [maxDropSize]="16"
+      />
+
+      <vs-input
+        [required]="true"
+        formControlName="identifier"
+        placeholder="apps.identifier"
+        errorMessage="common.error.field_is_required"
+      />
+
+      <vs-search-input
+        [required]="true"
+        formControlName="software"
+        placeholder="apps.software"
+        errorMessage="common.error.field_is_required"
+        [disabled]="!!id"
+        [formGroup]="form"
+        (search)="onSoftwareSearch()"
+      />
+
+      <vs-checkbox formControlName="isDefault" label="apps.default" />
+      <vs-checkbox formControlName="isActive" label="apps.active" />
+    </form>
+  </div>
+
+  <div footer>
+    <vs-button *ngIf="!notShowSaveButton"
+      type="save"
+      label="common.save"
+      (clickEvent)="save()"
+      [disabled]="!saveIsEnable"
+    />
+  </div>
+</vs-dialog>

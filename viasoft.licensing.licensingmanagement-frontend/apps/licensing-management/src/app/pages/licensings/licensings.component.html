@@ -1,0 +1,23 @@
+<vs-tabs-view-template class="content">
+  <vs-icon icon>people</vs-icon>
+  <ng-container actions>
+    <vs-button
+      *isGranted="[policies.CreateLicense]"
+      model="icon"
+      icon="plus"
+      label="common.add"
+      (clickEvent)="add()"
+    />
+
+    <vs-button
+      *isGranted="[policies.CreateLicense, policies.UpdateLicense]; op: 'OR'"
+      model="icon"
+      icon="floppy-disk"
+      label="common.save"
+      [disabled]="!saveIsEnable"
+      (clickEvent)="save()"
+    />
+  </ng-container>
+
+  <router-outlet />
+</vs-tabs-view-template>

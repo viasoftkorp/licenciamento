@@ -1,0 +1,16 @@
+:host {
+    .cell {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.25rem;
+
+        .dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: rgba(0,0,0,0.57);
+            border-radius: 0.25rem;
+        }
+    }
+}

@@ -1,0 +1,7 @@
+<vs-tabs-view-template>
+        <vs-icon icon>people</vs-icon>
+        <ng-container actions>
+          <vs-button (clickEvent)="add()" *isGranted="[policies.CreateApp]" model="icon" icon="plus" label="common.add" />
+        </ng-container>
+        <app-app-grid />
+</vs-tabs-view-template>

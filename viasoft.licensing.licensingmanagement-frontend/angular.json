@@ -1,0 +1,664 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "license-management": {
+      "root": "apps/licensing-management",
+      "sourceRoot": "apps/licensing-management/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/license-management",
+            "index": "apps/licensing-management/src/index.html",
+            "main": "apps/licensing-management/src/main.ts",
+            "polyfills": "apps/licensing-management/src/polyfills.ts",
+            "tsConfig": "apps/licensing-management/tsconfig.app.json",
+            "assets": [
+              "apps/licensing-management/src/favicon.ico",
+              "apps/licensing-management/src/assets"
+            ],
+            "styles": [
+              "apps/licensing-management/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css"
+            ],
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+              "ua-parser-js",
+              "lodash",
+              "dayjs",
+              "angular2-uuid",
+              "dompurify",
+              "localforage"
+            ]
+          },
+          "configurations": {
+            "dev-env": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensing-management/src/environments/environment.ts",
+                  "with": "apps/licensing-management/src/environments/environment.dev-env.ts"
+                }
+              ]
+            },
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensing-management/src/environments/environment.ts",
+                  "with": "apps/licensing-management/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": {"styles": {"inlineCritical": false }},
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "mock": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensing-management/src/environments/environment.ts",
+                  "with": "apps/licensing-management/src/environments/environment.mock.ts"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": ""
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "license-management:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "license-management:build:production"
+            },
+            "mock": {
+              "buildTarget": "license-management:build:mock"
+            },
+            "dev-env": {
+              "buildTarget": "license-management:build:dev-env"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "license-management:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/licensing-management/src/test.ts",
+            "polyfills": "apps/licensing-management/src/polyfills.ts",
+            "tsConfig": "apps/licensing-management/tsconfig.spec.json",
+            "karmaConfig": "apps/licensing-management/src/karma.conf.js",
+            "styles": [
+              "apps/licensing-management/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "apps/licensing-management/src/favicon.ico",
+              "apps/licensing-management/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/licensing-management/**/*.ts",
+              "apps/licensing-management/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "license-management-portal": {
+      "root": "apps/licensing-management",
+      "sourceRoot": "apps/licensing-management/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "outputPath": "dist/license-management",
+            "index": "apps/licensing-management/src/index.html",
+            "main": "apps/licensing-management/src/main.single-spa.ts",
+            "polyfills": "apps/licensing-management/src/polyfills.ts",
+            "tsConfig": "apps/licensing-management/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "*",
+                "input": "node_modules/@viasoft/fontawesome-pro/webfonts",
+                "output": "webfonts"
+              },
+              "apps/licensing-management/src/favicon.ico",
+              "apps/licensing-management/src/assets"
+            ],
+            "styles": [
+              "apps/licensing-management/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.prod.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/light.prod.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/light.min.css"
+            ],
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "apps/licensing-management/extra-webpack.config.js"
+            }
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensing-management/src/environments/environment.ts",
+                  "with": "apps/licensing-management/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": {"styles": {"inlineCritical": false }},
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "license-management-portal:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "license-management-portal:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "license-management-portal:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/licensing-management/src/test.ts",
+            "polyfills": "apps/licensing-management/src/polyfills.ts",
+            "tsConfig": "apps/licensing-management/tsconfig.spec.json",
+            "karmaConfig": "apps/licensing-management/src/karma.conf.js",
+            "styles": [
+              "apps/licensing-management/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.prod.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/light.prod.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/light.min.css"
+            ],
+            "scripts": [],
+            "assets": [
+              {
+                "glob": "*",
+                "input": "node_modules/@viasoft/fontawesome-pro/webfonts",
+                "output": "webfonts"
+              },
+              "apps/licensing-management/src/favicon.ico",
+              "apps/licensing-management/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/licensing-management/**/*.ts",
+              "apps/licensing-management/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "license-management-e2e": {
+      "root": "apps/licensing-management/e2e/",
+      "projectType": "application",
+      "prefix": "",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "apps/licensing-management/e2e/protractor.conf.js",
+            "devServerTarget": "license-management:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "license-management:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/licensing-management/e2e/**/*.ts",
+              "apps/licensing-management/e2e/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "licensing-licensingmanagement-licensedtenant": {
+      "projectType": "library",
+      "root": "libs/licensing-licensingmanagement-licensedtenant",
+      "sourceRoot": "libs/licensing-licensingmanagement-licensedtenant/src",
+      "prefix": "licensing",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "libs/licensing-licensingmanagement-licensedtenant/tsconfig.lib.json",
+            "project": "libs/licensing-licensingmanagement-licensedtenant/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/licensing-licensingmanagement-licensedtenant/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/licensing-licensingmanagement-licensedtenant/src/test.ts",
+            "tsConfig": "libs/licensing-licensingmanagement-licensedtenant/tsconfig.spec.json",
+            "karmaConfig": "libs/licensing-licensingmanagement-licensedtenant/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/licensing-licensingmanagement-licensedtenant/**/*.ts",
+              "libs/licensing-licensingmanagement-licensedtenant/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "licensedtenant-dev": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/licensedtenant-dev",
+      "sourceRoot": "apps/licensedtenant-dev/src",
+      "prefix": "licensing",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/licensedtenant-dev",
+            "index": "apps/licensedtenant-dev/src/index.html",
+            "main": "apps/licensedtenant-dev/src/main.ts",
+            "polyfills": "apps/licensedtenant-dev/src/polyfills.ts",
+            "tsConfig": "apps/licensedtenant-dev/tsconfig.app.json",
+            "assets": [
+              "apps/licensedtenant-dev/src/favicon.ico",
+              "apps/licensedtenant-dev/src/assets"
+            ],
+            "styles": [
+              "apps/licensedtenant-dev/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css"
+            ],
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensedtenant-dev/src/environments/environment.ts",
+                  "with": "apps/licensedtenant-dev/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": {"styles": {"inlineCritical": false }},
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "mock": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensedtenant-dev/src/environments/environment.ts",
+                  "with": "apps/licensedtenant-dev/src/environments/environment.mock.ts"
+                }
+              ],
+              "optimization": {"styles": {"inlineCritical": false }},
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": ""
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "licensedtenant-dev:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "licensedtenant-dev:build:production"
+            },
+            "mock": {
+              "buildTarget": "licensedtenant-dev:build:mock"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "licensedtenant-dev:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/licensedtenant-dev/src/test.ts",
+            "polyfills": "apps/licensedtenant-dev/src/polyfills.ts",
+            "tsConfig": "apps/licensedtenant-dev/tsconfig.spec.json",
+            "karmaConfig": "apps/licensedtenant-dev/karma.conf.js",
+            "assets": [
+              "apps/licensedtenant-dev/src/favicon.ico",
+              "apps/licensedtenant-dev/src/assets"
+            ],
+            "styles": [
+              "apps/licensedtenant-dev/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css"
+            ],
+            "scripts": []
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "apps/licensedtenant-dev/e2e/protractor.conf.js",
+            "devServerTarget": "licensedtenant-dev:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "licensedtenant-dev:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/licensedtenant-dev/**/*.ts",
+              "apps/licensedtenant-dev/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "licensedtenant-dev-production": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/licensedtenant-dev",
+      "sourceRoot": "apps/licensedtenant-dev/src",
+      "prefix": "licensing",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "outputPath": "dist/licensedtenant-dev",
+            "index": "apps/licensedtenant-dev/src/index.html",
+            "main": "apps/licensedtenant-dev/src/main.single-spa.ts",
+            "polyfills": "apps/licensedtenant-dev/src/polyfills.ts",
+            "tsConfig": "apps/licensedtenant-dev/tsconfig.app.json",
+            "assets": [
+              "apps/licensedtenant-dev/src/favicon.ico",
+              "apps/licensedtenant-dev/src/assets"
+            ],
+            "styles": [
+              "apps/licensedtenant-dev/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css"
+            ],
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "apps/licensedtenant-dev/extra-webpack.config.js"
+            }
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensedtenant-dev/src/environments/environment.ts",
+                  "with": "apps/licensedtenant-dev/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": {"styles": {"inlineCritical": false }},
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "mock": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/licensedtenant-dev/src/environments/environment.ts",
+                  "with": "apps/licensedtenant-dev/src/environments/environment.mock.ts"
+                }
+              ],
+              "optimization": {"styles": {"inlineCritical": false }},
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "licensedtenant-dev-production:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "licensedtenant-dev-production:build:production"
+            },
+            "mock": {
+              "browserTarget": "licensedtenant-dev:build:mock"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "licensedtenant-dev-production:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/licensedtenant-dev/src/test.ts",
+            "polyfills": "apps/licensedtenant-dev/src/polyfills.ts",
+            "tsConfig": "apps/licensedtenant-dev/tsconfig.spec.json",
+            "karmaConfig": "apps/licensedtenant-dev/karma.conf.js",
+            "assets": [
+              "apps/licensedtenant-dev/src/favicon.ico",
+              "apps/licensedtenant-dev/src/assets"
+            ],
+            "styles": [
+              "apps/licensedtenant-dev/src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/@viasoft/fontawesome-pro/css/all.min.css"
+            ],
+            "scripts": []
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "apps/licensedtenant-dev/e2e/protractor.conf.js",
+            "devServerTarget": "licensedtenant-dev:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "licensedtenant-dev:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/licensedtenant-dev/**/*.ts",
+              "apps/licensedtenant-dev/**/*.html"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false,
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
+  }
+}

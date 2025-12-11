@@ -1,0 +1,58 @@
+<vs-layout>
+  <div content>
+    <vs-form>
+      <form [formGroup]="form" class="loose-apps-number-select-form" *ngIf="form" group-2>
+        <vs-input type="number" formControlName="numberOfLicenses" placeholder="licensings.numberOfLicenses"
+          errorMessage="common.error.field_is_required" [required]="true"></vs-input>
+          <br group-2/>
+        <vs-search-input [formGroup]="form" formControlName="appName" [disabled]="isDisabled" placeholder="apps.app"
+          errorMessage="common.error.field_is_required" (search)="onAppSearch()" [required]="true"></vs-search-input>
+        <br group-2/>
+        <vs-datepicker
+        [formGroup]="form"
+        controlName="expirationDateTime"
+        placeholder="licensings.expirationDateTime"
+        errorMessage="common.error.expiration_date_must_be_valid"
+        >
+        </vs-datepicker>
+        <vs-select
+        formControlName="status"
+        placeholder="licensings.status"
+        errorMessage="common.error.field_is_required"
+        [options]="optionsStatusSelect"
+        [required]="true"
+        ></vs-select>
+        <div class="checkbox">
+          <vs-checkbox
+            formControlName="licensingModel"
+            label="licensings.namedLicense"
+          ></vs-checkbox>
+          <vs-icon
+            icon="circle-question"
+            tooltip="licensings.licensingModelTooltip"
+          ></vs-icon>
+        </div>
+        <div class="checkbox">
+          <vs-checkbox
+            formControlName="licensingMode"
+            label="licensings.offlineMode"
+          ></vs-checkbox>
+          <vs-icon
+            icon="circle-question"
+            tooltip="licensings.licensingModeTooltip"
+          ></vs-icon>
+        </div>
+        <br group-2/>
+        <div>
+          <vs-label *ngIf="form.getError('numberOfLicensesIsRequired')" label="common.error.numberOfLicensesIsRequired"
+            model="error"></vs-label>
+        </div>
+      </form>
+    </vs-form>
+  </div>
+
+  <div footer align-right>
+    <vs-button *ngIf="hasUpdatePermission" type="save" (clickEvent)="save()" [disabled]="!form.valid" label="common.save"></vs-button>
+    <vs-button type="cancel" (clickEvent)="cancel()" label="common.cancel"></vs-button>
+  </div>
+</vs-layout>

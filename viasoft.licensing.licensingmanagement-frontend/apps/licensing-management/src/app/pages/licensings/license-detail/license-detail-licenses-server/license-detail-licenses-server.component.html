@@ -1,0 +1,47 @@
+<vs-layout>
+  <div content>
+    <vs-form *ngIf="formGroup" [formGroup]="formGroup">
+      <vs-checkbox
+        [label]="'licensings.licensesServer.useHardwareIdSimpleConfigurations'"
+        [formControlName]="'useSimpleHardwareId'"
+      ></vs-checkbox>
+      <vs-button
+        model="icon"
+        icon="circle-question"
+        [tooltip]="'common.help'"
+        (clickEvent)='showLicensedTenantSettingsInfo(useSimpleHardwareIdKey)'
+        (click)="preventDefault($event)"
+      ></vs-button>
+    </vs-form>
+    <vs-form *ngIf="licenseDetail.form" [formGroup]="licenseDetail.form">
+      <div>
+        <vs-radio-group formControlName="licenseConsume" [options]="licenseDetail.radios">
+          <ng-template vsTemplate="user" let-item>
+            <div class="template-radio">
+              <span>{{ item.title | translate }}</span>
+              <vs-button
+                model="icon"
+                icon="circle-question"
+                [tooltip]="'licensings.infoLicenseConsumeConnection'"
+                (clickEvent)="licenseDetail.showInfoConsume(licenseDetail.connectionConst)"
+                (click)="licenseDetail.preventDefault($event)"
+              ></vs-button>
+            </div>
+          </ng-template>
+          <ng-template vsTemplate="access" let-item>
+            <div class="template-radio">
+              <span>{{ item.title | translate }}</span>
+              <vs-button
+                model="icon"
+                icon="circle-question"
+                [tooltip]="'licensings.infoLicenseConsumeAcess'"
+                (clickEvent)="licenseDetail.showInfoConsume(licenseDetail.accessConst)"
+                (click)="licenseDetail.preventDefault($event)"
+              ></vs-button>
+            </div>
+          </ng-template>
+        </vs-radio-group>
+      </div>
+    </vs-form>
+  </div>
+</vs-layout>

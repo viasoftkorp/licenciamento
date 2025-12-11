@@ -1,0 +1,13 @@
+<vs-tabs-view-template>
+  <ng-container actions>
+    <vs-button *ngIf="hasPermission"
+      label="common.apply_batch_operations"
+      icon="save"
+      model="icon"
+      [disabled]="validationDisabledButton()"
+      (clickEvent)="save()"
+    />
+  </ng-container>
+  <app-app-grid-batch-operation />
+  <app-bundle-grid-batch-operation />
+</vs-tabs-view-template>

@@ -1,0 +1,6 @@
+@use '@angular/material' as mat;
+@use "@viasoft/theming/config" as config;
+@import "@viasoft/theming/use-theme";
+
+@include useTheme();
+

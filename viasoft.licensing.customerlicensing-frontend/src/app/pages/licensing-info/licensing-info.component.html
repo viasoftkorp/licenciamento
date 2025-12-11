@@ -1,0 +1,69 @@
+<vs-tabs-view-template>
+  <div class="container" fxLayout="column">
+    <div class="title" fxLayout="row" fxLayoutGap="8px">
+      <vs-icon icon="file-certificate"></vs-icon>
+      <vs-label model="label" label="LicensingInfo.LicensingInformation"></vs-label>
+    </div>
+    <div class="tenant-info">
+      <ng-container *ngIf="isLoad">
+        <div
+          fxLayout="column"
+          fxLayoutGap="6px"
+          [ngStyle.lt-sm]="{'margin-bottom.px': 12, 'margin-right.px': 12}"
+        >
+          <vs-label
+            model="sub_title"
+            label="LicensingInfo.Status.Status"
+          ></vs-label>
+          <div fxLayout="row" fxLayoutGap="8px" data-cy="status">
+            <vs-icon [icon]="licensing.status.icon" [color]="licensing.status.iconColor"></vs-icon>
+            <vs-label mode="aux_title"
+              >{{ licensing.status.label | translate }}</vs-label
+            >
+          </div>
+        </div>
+        <span class="divider" fxHide fxShow.gt-xs></span>
+        <div
+          fxLayout="column"
+          fxLayoutGap="6px"
+          [ngStyle.lt-sm]="{'margin-bottom.px': 12, 'margin-right.px': 12}"
+        >
+          <vs-label model="sub_title" label="LicensingInfo.Identifier"></vs-label>
+          <div fxLayout="row" fxLayoutGap="8px" data-cy="identifier">
+            <vs-icon icon="id-card"></vs-icon>
+            <vs-label mode="aux_title"
+              >{{ licensing.licensingIdentifier }}</vs-label
+            >
+          </div>
+        </div>
+        <span class="divider" fxHide fxShow.gt-xs></span>
+        <div
+          fxLayout="column"
+          fxLayoutGap="6px"
+          [ngStyle.lt-sm]="{'margin-bottom.px': 12}"
+        >
+          <vs-label
+            model="sub_title"
+            label="LicensingInfo.LicensedCnpjs"
+          ></vs-label>
+          <div fxLayout="row" fxLayoutGap="8px" data-cy="licensedCnpjs">
+            <vs-icon icon="building"></vs-icon>
+            <ul
+              class="inline-list"
+            >
+              <li *ngFor="let cnpj of licensing.cnpjs">
+                <vs-label mode="aux_title"
+                  >{{ cnpj | imask:cnpjMask }}</vs-label
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <app-product-grid
+    *ngIf="licensedTenantId"
+    [licensedTenantId]="licensedTenantId"
+  ></app-product-grid>
+</vs-tabs-view-template>

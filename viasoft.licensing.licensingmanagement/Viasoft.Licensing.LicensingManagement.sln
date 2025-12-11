@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicensingManagement.Domain", "Viasoft.Licensing.LicensingManagement.Domain\Viasoft.Licensing.LicensingManagement.Domain.csproj", "{9B1175D4-D62F-492F-8000-B8153E38C5AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicensingManagement.Infrastructure", "Viasoft.Licensing.LicensingManagement.Infrastructure\Viasoft.Licensing.LicensingManagement.Infrastructure.csproj", "{93F7DE93-04B7-4319-B227-1A5EDA7ECC49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicensingManagement.Host", "Viasoft.Licensing.LicensingManagement.Host\Viasoft.Licensing.LicensingManagement.Host.csproj", "{7DA587A8-C996-4DC0-9263-2C8F74DF0EC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicensingManagement.UnitTest", "Viasoft.Licensing.LicensingManagement.UnitTest\Viasoft.Licensing.LicensingManagement.UnitTest.csproj", "{726BA096-997B-4994-A012-5E2539968C67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B1175D4-D62F-492F-8000-B8153E38C5AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B1175D4-D62F-492F-8000-B8153E38C5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B1175D4-D62F-492F-8000-B8153E38C5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B1175D4-D62F-492F-8000-B8153E38C5AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93F7DE93-04B7-4319-B227-1A5EDA7ECC49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93F7DE93-04B7-4319-B227-1A5EDA7ECC49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93F7DE93-04B7-4319-B227-1A5EDA7ECC49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93F7DE93-04B7-4319-B227-1A5EDA7ECC49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DA587A8-C996-4DC0-9263-2C8F74DF0EC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DA587A8-C996-4DC0-9263-2C8F74DF0EC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DA587A8-C996-4DC0-9263-2C8F74DF0EC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DA587A8-C996-4DC0-9263-2C8F74DF0EC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{726BA096-997B-4994-A012-5E2539968C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{726BA096-997B-4994-A012-5E2539968C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{726BA096-997B-4994-A012-5E2539968C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{726BA096-997B-4994-A012-5E2539968C67}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

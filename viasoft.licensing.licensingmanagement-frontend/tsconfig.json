@@ -1,0 +1,43 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "downlevelIteration": true,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "target": "ES2022",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
+    "paths": {
+      "@viasoft/usage-search-tenant-filter-modal-dev": [
+        "apps/licensedtenant-dev/src"
+      ],
+      "@viasoft/usage-search-tenant-filter-modal-dev/*": [
+        "apps/licensedtenant-dev/src/*"
+      ],
+      "@viasoft/licensing-licensingmanagement-licensedtenant": [
+        "libs/licensing-licensingmanagement-licensedtenant/src/public-api.ts"
+      ],
+      "@viasoft/licensing-management": [
+        "apps/licensing-management/src"
+      ],
+      "@viasoft/licensing-management/*": [
+        "apps/licensing-management/src/*"
+      ]
+    },
+    "useDefineForClassFields": false
+  }
+}

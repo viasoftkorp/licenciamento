@@ -1,0 +1,16 @@
+:host {
+    vs-layout {
+        padding: 12px;
+        div {
+            overflow: hidden;
+            div.checkbox {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                vs-checkbox {
+                    padding-top: 5px;
+                }
+            }
+        }
+    }
+}

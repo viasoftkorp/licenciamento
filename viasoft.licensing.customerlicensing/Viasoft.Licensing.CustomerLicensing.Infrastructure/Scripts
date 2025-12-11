@@ -1,0 +1,10 @@
+cd .\Viasoft.Licensing.CustomerLicensing.Infrastructure\
+dotnet ef migrations add "Adding ..." -s ..\Viasoft.Licensing.CustomerLicensing.Host\ --context ViasoftCustomerLicensingDbContext
+
+dotnet ef database update -s ..\Viasoft.Licensing.CustomerLicensing.Host\ --context ViasoftCustomerLicensingDbContext
+
+revert migration
+    dotnet ef --startup-project ..\Viasoft.Licensing.CustomerLicensing.Host\ database update "Miragtion name" --context ViasoftCustomerLicensingDbContext
+    
+remove migration
+    dotnet ef --startup-project ..\Viasoft.Licensing.CustomerLicensing.Host\ migrations remove --context ViasoftCustomerLicensingDbContext

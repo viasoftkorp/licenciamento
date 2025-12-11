@@ -1,0 +1,22 @@
+<vs-tabs-view-template>
+  <vs-icon icon>people</vs-icon>
+  <ng-container actions>
+    <vs-button
+      *isGranted="[policies.CreateBundle]"
+      model="icon"
+      icon="plus"
+      label="common.add"
+      (clickEvent)="add()"
+    />
+
+    <vs-button
+      *isGranted="[policies.CreateBundle, policies.UpdateBundle]; op: 'OR'"
+      model="icon"
+      icon="save"
+      label="common.save"
+      [disabled]="!saveIsEnable"
+      (clickEvent)="save()"
+    />
+  </ng-container>
+  <router-outlet />
+</vs-tabs-view-template>

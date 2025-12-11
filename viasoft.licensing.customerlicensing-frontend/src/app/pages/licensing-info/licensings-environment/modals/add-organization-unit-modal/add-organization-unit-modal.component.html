@@ -1,0 +1,14 @@
+<vs-layout>
+  <vs-label title model="title" label="Environment.Organization.AddUnitModal.Title"></vs-label>
+  <div content>
+    <form *ngIf="form" [formGroup]="form">
+      <vs-input formControlName="name" placeholder="Environment.Organization.AddUnitModal.Name" required></vs-input>
+      <vs-input formControlName="description" placeholder="Environment.Organization.AddUnitModal.Description"></vs-input>
+    </form>
+    <vs-label *ngIf="errorMessage" model="error" [label]="errorMessage"></vs-label>
+  </div>
+  <div footer align-right>
+    <vs-button type="save" label="Environment.Organization.AddUnitModal.Save" [disabled]="isDisabled" (clickEvent)="createOrUpdateUnit()"></vs-button>
+    <vs-button type="cancel" label="Environment.Organization.AddUnitModal.Cancel" (clickEvent)="closeModal()"></vs-button>
+  </div>
+</vs-layout>

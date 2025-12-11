@@ -1,0 +1,9 @@
+<vs-form>
+  <div content>
+    <form *ngIf="fileProviderForm" [formGroup]="fileProviderForm">
+      <vs-input formControlName="quotaLimit" type="number" [placeholder]="placeholder || 'file_provider.form.quotaLimit'" [required]="true"
+        errorMessage="file_provider.form.errors.limitMustBeSet" hintLabel="file_provider.form.byteSizeNoLimitHint">
+      </vs-input>
+    </form>
+  </div>
+</vs-form>

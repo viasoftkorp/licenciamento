@@ -1,0 +1,15 @@
+<vs-dialog>
+    <div content>
+        <form [formGroup]="form" class="apps-number-select-form" *ngIf="form">
+            <vs-input type="number" formControlName="numberOfLicenses" placeholder="licensings.numberOfLicenses"
+                errorMessage="common.error.field_is_required" [required]="true"></vs-input>
+            <vs-label label="common.notification.attention_batch_operation" model="sub_title"></vs-label>
+        </form>
+    </div>
+
+    <div footer align-right>
+        <vs-button type="cancel" (clickEvent)="cancel()" label="common.cancel"></vs-button>
+        <vs-button type="save" (clickEvent)="save()" [disabled]="!form.valid" label="common.save"></vs-button>
+    </div>
+
+</vs-dialog>

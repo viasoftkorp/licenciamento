@@ -1,0 +1,32 @@
+def publishProduction = true // Caso seu serviço não rode em produção, set para false
+
+def buildType = "csharp"
+
+def data = """ {
+    "serviceName": "${env.JOB_NAME.replaceFirst(/^([^\/]+?)\/.*$/, '$1')}",
+    "buildNumber": "${env.BUILD_NUMBER}",
+    "buildType": "${buildType}",
+    "branchName": "${env.BRANCH_NAME}",
+    "shouldPublishProduction": ${publishProduction},
+    "publishServerIp": "${env.IP_SERVICES_1_ARM}",
+    "secretsToImport": [
+        "LS_UPDATE_KEY",
+        "LS_LICENSING_SECRET",
+        "LS_CUSTOMER_SECRET"
+    ],
+    "buildArgs": [
+        "/p:SkipAutoUpdate=true",
+        "/p:AppCastUrl=https://cdn-connect.korp.com.br/license-server-updates/appcast.xml",
+        "/p:AutoUpdatePublicKey={{ LS_UPDATE_KEY }}",
+        "/p:Authority=https://gateway.korp.com.br/oauth",
+        "/p:LicensingManagementSecret={{ LS_LICENSING_SECRET }}",
+        "/p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }}"
+    ]
+}
+"""
+request = httpRequest httpMode: 'POST',
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: data,
+                        url: "${env.GENERATE_JENKINSFILE_URL_V2}",
+                        customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]]
+evaluate(request.content)

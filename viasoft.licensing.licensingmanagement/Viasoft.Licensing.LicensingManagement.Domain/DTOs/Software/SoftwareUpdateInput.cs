@@ -1,0 +1,21 @@
+using System;
+using Viasoft.Core.DDD.Application.Dto.Entities;
+using Viasoft.Data.Attributes;
+
+namespace Viasoft.Licensing.LicensingManagement.Domain.DTOs.Software
+{
+    public class SoftwareUpdateInput : IEntityDto
+    {
+        [StrictRequired]
+        public Guid Id { get; set; }
+        
+        [StrictRequired]
+        public string Name { get; set; }
+        
+        [StrictRequired]
+        public string Identifier { get; set; }
+
+        [StrictRequired]
+        public bool IsActive { get; set; }
+    }
+}

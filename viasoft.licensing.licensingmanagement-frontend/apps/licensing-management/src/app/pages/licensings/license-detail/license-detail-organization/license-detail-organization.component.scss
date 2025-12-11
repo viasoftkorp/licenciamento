@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  .title-container {
+    display: flex;
+    align-items: center;
+  }
+  .hidden {
+    display: none !important;
+  }
+  > vs-no-result {
+    padding: 12px 0;
+  }
+  vs-grid {
+    flex: auto;
+  }
+}

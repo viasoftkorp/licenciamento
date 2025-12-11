@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareId.Host", "HardwareId.Host\HardwareId.Host.csproj", "{D05F3697-36EE-4853-B76C-BBB476F19933}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicenseServer.Shared", "..\Viasoft.Licensing.LicenseServer.Shared\Viasoft.Licensing.LicenseServer.Shared.csproj", "{7DE48340-101E-4EC6-BBF9-4E77B8CA7A9A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D05F3697-36EE-4853-B76C-BBB476F19933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D05F3697-36EE-4853-B76C-BBB476F19933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D05F3697-36EE-4853-B76C-BBB476F19933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D05F3697-36EE-4853-B76C-BBB476F19933}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DE48340-101E-4EC6-BBF9-4E77B8CA7A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DE48340-101E-4EC6-BBF9-4E77B8CA7A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DE48340-101E-4EC6-BBF9-4E77B8CA7A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DE48340-101E-4EC6-BBF9-4E77B8CA7A9A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

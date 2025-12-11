@@ -1,0 +1,17 @@
+<vs-gadget
+  [instanceId]="instanceId"
+  minHeight="50"
+  [hideTitle]="true"
+  [hideFilterButton]="true"
+  [hideSettingsButton]="true"
+>
+  <app-licensings-info-cards-gadget
+    [value]="onlineApps()"
+    [description]="description"
+  ></app-licensings-info-cards-gadget>
+  <vs-gadget-error-handler
+    [errorObject]="errorObject"
+    [errorExists]="errorExists"
+  >
+  </vs-gadget-error-handler>
+</vs-gadget>

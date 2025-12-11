@@ -1,0 +1,8 @@
+<vs-grid class="heigth-fixed" [options]="unitGridOptions"></vs-grid>
+<div class="title-container">
+  <vs-icon icon="database"></vs-icon>
+  <vs-label *ngIf="currentUnit?.name" [label]="'Organization.UnitEnvironment.EnvironmentOf|unitName:' + currentUnit?.name"></vs-label>
+  <vs-label *ngIf="!currentUnit?.name" label="Organization.UnitEnvironment.Environments"></vs-label>
+</div>
+<vs-no-result *ngIf="!hasUnitSelected" message="Organization.Unit.SelectAnUnitToViewEnvironments"></vs-no-result>
+<vs-grid [class.hidden]="!hasUnitSelected" class="heigth-fixed" [options]="environmentGridOptions"></vs-grid>

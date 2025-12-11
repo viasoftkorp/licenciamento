@@ -1,0 +1,13 @@
+{
+  "name": "licensing-licensingmanagement-licensedtenant-dev",
+  "version": "0.0.0",
+  "author": "Viasoft Korp",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build --configuration production",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  }
+}

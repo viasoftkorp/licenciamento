@@ -1,0 +1,32 @@
+<vs-layout>
+  <vs-label title model="title" label="Organization.UnitEnvironment.Title"></vs-label>
+  <div content>
+    <vs-spinner *ngIf="!form"></vs-spinner>
+    <form *ngIf="form" [formGroup]="form">
+      <vs-input formControlName="name" placeholder="Organization.UnitEnvironment.Fields.Name" [required]="true"></vs-input>
+      <vs-input formControlName="description" placeholder="Organization.UnitEnvironment.Fields.Description"></vs-input>
+      <vs-input
+        *ngIf="form.get('isDesktop').value && form.get('databaseName').value && form.get('databaseName').value.length > 0"
+        formControlName="desktopDatabaseVersion" placeholder="Organization.UnitEnvironment.Fields.Version"
+        errorMessage="Organization.UnitEnvironment.Errors.InvalidDbVersion">
+      </vs-input>
+      <vs-checkbox formControlName="isProduction" label="Organization.UnitEnvironment.Fields.IsProduction">
+      </vs-checkbox>
+      <vs-checkbox formControlName="isMobile" label="Organization.UnitEnvironment.Fields.IsMobile">
+      </vs-checkbox>
+      <vs-checkbox formControlName="isWeb" label="Organization.UnitEnvironment.Fields.IsWeb"></vs-checkbox>
+      <vs-checkbox formControlName="isDesktop" label="Organization.UnitEnvironment.Fields.IsDesktop"></vs-checkbox>
+      <vs-input *ngIf="form.get('isDesktop').value" formControlName="databaseName"
+        placeholder="Organization.UnitEnvironment.Fields.DatabaseName"
+        errorMessage="Organization.UnitEnvironment.Errors.InvalidDbNameRegexValidate"></vs-input>
+      <vs-label *ngIf="form.get('databaseName').dirty && form.getError('emptyDatabase')" model="error"
+        label="Organization.UnitEnvironment.Errors.EmptyDatabase"></vs-label>
+      <vs-label *ngIf="errorMessage" model="error" [label]="errorMessage"></vs-label>
+    </form>
+  </div>
+  <div footer align-right>
+    <vs-button type="save" label="common.save" [disabled]="!form || form.invalid"
+      (clickEvent)="createOrUpdateEnvironment()"></vs-button>
+    <vs-button type="cancel" label="common.cancel" (clickEvent)="closeModal()"></vs-button>
+  </div>
+</vs-layout>

@@ -1,0 +1,6 @@
+// CSS style that does not allow vs-form-group to steal space from the tree-table
+vs-form {
+    flex: initial;
+    padding-top: 16px;
+    margin-left: 4px;
+}

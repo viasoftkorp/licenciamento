@@ -1,0 +1,13 @@
+<vs-dialog *ngIf="isDomainLoaded">
+    <vs-icon
+      icon="server"
+    ></vs-icon>
+    <vs-label
+      title
+      label="{{ title }}"
+    ></vs-label>
+    <div content>
+      <vs-grid *ngIf="!loading" [options]="grid"></vs-grid>
+      <vs-spinner *ngIf="loading"></vs-spinner>
+    </div>
+</vs-dialog>

@@ -1,0 +1,28 @@
+<vs-tabs-view-template>
+  <ng-container actions>
+    <div class="buttons">
+      <vs-button
+        model="icon"
+        icon="plus"
+        label="Licensings.DashBoard.AddGadget"
+        placeholder="Licensings.DashBoard.AddGadget"
+        (clickEvent)="dashboard.openAddGadget()"
+      ></vs-button>
+      <vs-button
+        model="icon"
+        icon="cog"
+        label="Licensings.DashBoard.EditPanels"
+        placeholder="Licensings.DashBoard.EditPanels"
+        (clickEvent)="dashboard.openConfigurations()"
+      ></vs-button>
+      <vs-button
+        model="icon"
+        icon="game-board-alt"
+        label="Licensings.DashBoard.EditLayout"
+        placeholder="Licensings.DashBoard.EditLayout"
+        (clickEvent)="dashboard.editLayout($event)"
+      ></vs-button>
+    </div>
+  </ng-container>
+  <vs-dashboard #dashboard [customTabs]="false"> </vs-dashboard>
+</vs-tabs-view-template>

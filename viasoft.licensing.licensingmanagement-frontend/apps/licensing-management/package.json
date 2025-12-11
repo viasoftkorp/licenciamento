@@ -1,0 +1,18 @@
+{
+  "name": "license-management",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build --configuration production",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "serve:mock": "ng serve --configuration=mock",
+    "build:single-spa": "ng build --configuration production --deploy-url http://localhost:4200/",
+    "serve:single-spa": "ng serve --disable-host-check --port 4200 --deploy-url http://localhost:4200/ --live-reload false",
+    "build:jenkins": "ng build license-management-portal --configuration production --deployUrl=https://cdn-interno.korp.com.br/v1/license-management/",
+    "build:jenkins-prod": "ng build license-management-portal --configuration production --deployUrl=https://cdn-connect.korp.com.br/v1/license-management/"
+  },
+  "private": true
+}

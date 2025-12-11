@@ -1,0 +1,26 @@
+<vs-layout>
+    <div content>
+        <div>
+            <vs-form>
+                <div class="form_header">
+                    <vs-label label="infrastructureConfiguration.title" title></vs-label>
+                </div>
+                <div content>
+                    <form [formGroup]="infrastructureConfigurationForm" *ngIf="infrastructureConfigurationForm" group-2>
+                        <vs-input
+                            formControlName="gateway"
+                            placeholder="infrastructureConfiguration.gateway"
+                            errorMessage="infrastructureConfiguration.error.invalidGateway"
+                        ></vs-input>
+
+                        <vs-input
+                            [readonly]="true"
+                            formControlName="desktopDatabaseName"
+                            placeholder="infrastructureConfiguration.desktopDatabaseName"
+                        ></vs-input>
+                    </form>
+                </div>
+            </vs-form>
+        </div>
+    </div>
+</vs-layout>

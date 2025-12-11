@@ -1,0 +1,16 @@
+{
+  "name": "@viasoft/licensing-licensingmanagement-licensedtenant",
+  "version": "0.0.1",
+  "author": "Viasoft Korp",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@angular/core": "~9.1.12",
+    "@angular/common": "~9.1.12",
+    "@angular/material": "^9.2.4",
+    "@viasoft/components": "5.5.0",
+    "@viasoft/view-template": "5.5.0",
+    "@viasoft/client-core": "5.5.0"
+  }
+}

@@ -1,0 +1,35 @@
+:host{
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  .bundles-form {
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+    // WORKAROUND ESTILOS VS;
+    vs-input,
+    vs-checkbox,
+    vs-search-input {
+      & + vs-input,
+      & + vs-checkbox,
+      & + vs-search-input {
+        padding-left: 8px;
+      }
+    }
+  
+    vs-input,
+    vs-search-input {
+      flex: 30%;
+    }
+  
+    vs-checkbox {
+      flex: 5%
+    }
+  }
+  > vs-header {
+    flex: initial;
+  }
+  > vs-header + vs-grid {
+    flex: auto;
+  }
+}

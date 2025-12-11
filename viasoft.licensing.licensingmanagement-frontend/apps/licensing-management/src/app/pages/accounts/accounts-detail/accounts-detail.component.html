@@ -1,0 +1,92 @@
+<vs-dialog>
+    <div content>
+        <vs-form>
+            <div class="form_header">
+                <vs-icon icon="circle-user"></vs-icon>
+                <vs-label label="accounts.generalInfo" title></vs-label>
+            </div>
+            <div content>
+                <form [formGroup]="generalInfoForm" *ngIf="generalInfoForm" group-3>
+                    <vs-input formControlName="companyName" placeholder="accounts.details.companyName"
+                        errorMessage="common.error.field_is_required" [required]="true"></vs-input>
+
+                    <vs-input formControlName="cnpjCpf" placeholder="accounts.details.cnpjCpf" iconSuffix="magnifying-glass"
+                        (blurEvent)="searchCompany($event.target.value)"
+                        (keyEnterEvent)="searchCompany($event.target.value)"
+                        (suffixClickEvent)="searchByFormValueCnpj()" [errorMessage]="cnpjCpfErrorMessage"
+                        mask="cnpj-cpf" [required]="true"></vs-input>
+
+                    <vs-select [options]="optionsSelect" placeholder="accounts.details.accountStatus.status"
+                        formControlName="status" errorMessage="common.error.field_is_required" [required]="true"></vs-select>
+
+                    <vs-input formControlName="tradingName" placeholder="accounts.details.tradingName"
+                        errorMessage="common.error.field_is_required" [required]="true"></vs-input>
+
+                    <div>
+                        <vs-input formControlName="phone" mask="phone" placeholder="accounts.details.phone"
+                            errorMessage="common.error.invalid_phone" (blurEvent)="phoneErrorMessage = ''"></vs-input>
+                        <p *ngIf="phoneErrorMessage" class="phone-error-message">{{phoneErrorMessage}}</p>
+                    </div>
+
+                    <vs-input formControlName="webSite" placeholder="accounts.details.webSite"></vs-input>
+
+                    <vs-input formControlName="email" placeholder="accounts.details.email"
+                        errorMessage="common.error.invalid_email"></vs-input>
+                    <span></span>
+                    <span></span>
+                </form>
+            </div>
+        </vs-form>
+
+        <vs-form>
+            <div class="form_header">
+                <vs-icon icon="location-dot"></vs-icon>
+                <vs-label label="accounts.adressInfo" title></vs-label>
+            </div>
+            <div content>
+                <form [formGroup]="adressInfoForm" *ngIf="adressInfoForm" group-3>
+                    <vs-input formControlName="zipCode" placeholder="accounts.details.zipCode" iconSuffix="magnifying-glass"
+                        (blurEvent)="searchZipCode($event.target.value)"
+                        (keyEnterEvent)="searchZipCode($event.target.value)"
+                        (suffixClickEvent)="searchByFormValueZipCode()" errorMessage="common.error.only_numbers"
+                        mask="zipcode"></vs-input>
+
+                    <vs-input formControlName="state" placeholder="accounts.details.state"></vs-input>
+
+                    <vs-input formControlName="city" placeholder="accounts.details.city"></vs-input>
+
+                    <vs-input formControlName="neighborhood" placeholder="accounts.details.neighborhood"></vs-input>
+
+                    <vs-input formControlName="street" placeholder="accounts.details.street"></vs-input>
+
+                    <vs-input formControlName="number" placeholder="accounts.details.number"
+                        errorMessage="common.error.only_numbers"></vs-input>
+
+                    <vs-input formControlName="detail" placeholder="accounts.details.detail"></vs-input>
+                    <span></span>
+                    <span></span>
+                </form>
+            </div>
+        </vs-form>
+
+        <vs-form>
+            <div class="form_header">
+                <vs-icon icon="credit-card"></vs-icon>
+                <vs-label label="accounts.billingInfo" title></vs-label>
+            </div>
+            <div content>
+                <form [formGroup]="billingInfoForm" *ngIf="billingInfoForm" group-3>
+                    <vs-input formControlName="billingEmail" placeholder="accounts.details.billingEmail"
+                        errorMessage="common.error.invalid_email"></vs-input>
+                    <span></span>
+                    <span></span>
+                </form>
+            </div>
+        </vs-form>
+    </div>
+
+    <div footer>
+        <vs-button *ngIf="!notShowSaveButton" type="save" label="common.save" (clickEvent)="save()"
+            [disabled]="!validToSave"></vs-button>
+    </div>
+</vs-dialog>

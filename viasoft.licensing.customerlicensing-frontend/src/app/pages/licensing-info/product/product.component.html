@@ -1,0 +1,64 @@
+<vs-tabs-view-template>
+  <div class="container">
+    <div class="title-container">
+      <div class="title icon-label">
+        <vs-icon icon="users"></vs-icon>
+        <vs-label model="label" label="LicensingInfo.Products.Users"></vs-label>
+      </div>
+      <vs-button 
+        *ngIf="isLicensingNamed" 
+        (clickEvent)="assignLicense()" 
+        model="icon" 
+        icon="user-plus" 
+        tooltip="LicensingInfo.AssignLicense"
+      ></vs-button>
+    </div>
+    <ng-container *ngIf="isLoad">
+      <div class="licensing">
+        <div class="box">
+          <vs-label class="offset" model="sub_title" label="LicensingInfo.Product"></vs-label>
+          <div class="icon-label" data-cy="name">
+            <vs-icon icon="boxes" color="#2B3D4F"></vs-icon>
+            <vs-label class="offset" mode="aux_title">{{ product.name }}</vs-label>
+          </div>
+          <progress-bar color="#2B3D4F" percentage="100%"></progress-bar>
+        </div>
+        <div class="box">
+          <vs-label
+            class="offset"
+            model="sub_title"
+            label="LicensingInfo.Products.SubscriptionStatus"
+          ></vs-label>
+          <div class="icon-label" data-cy="status">
+            <vs-icon [icon]="product.status.icon" [color]="product.status.iconColor"></vs-icon>
+            <vs-label class="offset" mode="aux_title">{{ product.status.label | translate }}</vs-label>
+          </div>
+          <progress-bar [color]="product.status.iconColor" percentage="100%"></progress-bar>
+        </div>
+        <div class="used-licences box">
+          <vs-label
+            model="sub_title"
+            [label]="product.usedLicensesLabel"
+          ></vs-label>
+          <div class="icon-label" data-cy="licenses">
+            <vs-icon icon="analytics" color="#2680EB"></vs-icon>
+            <vs-label mode="aux_title"
+              ><span class="bold">{{ product.numberOfUsedLicenses }} </span> de {{
+                product.numberOfLicenses }}</vs-label
+            >
+          </div>
+          <progress-bar color="#2680EB" [percentage]="licensesUsageRate"></progress-bar>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <app-users-grid
+    *ngIf="isLoad"
+    [productId]="product.id"
+    [productType]="productType"
+    [productIdentifier]="product.identifier"
+    [licensingModel]="product.licensingModel"
+    [licensingMode]="product.licensingMode"
+    [licensedTenantId]="licensedTenantId"
+></app-users-grid>
+</vs-tabs-view-template>

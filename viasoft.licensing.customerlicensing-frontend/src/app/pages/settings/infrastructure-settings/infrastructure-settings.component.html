@@ -1,0 +1,56 @@
+<vs-layout>
+  <div content>
+    <vs-form>
+      <form [formGroup]="infrastructureSettingsForm" *ngIf="infrastructureSettingsForm" id="meutestinho">
+        <vs-input
+          formControlName="gatewayAddress"
+          placeholder="settings.infrastructureSettings.gateway"
+          errorMessage="settings.infrastructureSettings.error.invalidGateway"
+        ></vs-input>
+
+        <vs-label model="title" label="settings.infrastructureSettings.linuxServerApp">
+        </vs-label>
+        <div class="version-list">
+
+          <vs-select
+              [cleanable]="false"
+              [options]="versionsOfDropdown"
+              placeholder="settings.infrastructureSettings.selectVersion"
+              errorMessage="Select.Error"
+              (select)="selectedVer($event.value)"
+          ></vs-select>
+          <vs-button
+              class="copy-button"
+              tooltip="settings.infrastructureSettings.copyCommand.updateTooltip"
+              (clickEvent)="copyUpdateCommand()"
+              [disabled]="!selectedVersion"
+        >
+          <vs-icon icon="copy"></vs-icon>
+          <vs-label label="settings.infrastructureSettings.copyCommand.update"></vs-label>
+          </vs-button>
+
+          <vs-button
+            class="copy-button"
+            tooltip="settings.infrastructureSettings.copyCommand.implementationTooltip"
+            (clickEvent)="copyDeployCommand()"
+            [disabled]="!selectedVersion"
+          >
+            <vs-icon icon="copy"></vs-icon>
+            <vs-label label="settings.infrastructureSettings.copyCommand.copyCommand"></vs-label>
+          </vs-button>
+
+          <vs-button
+            class="copy-button"
+            tooltip="settings.infrastructureSettings.copyCommand.uninstallTooltip"
+            (clickEvent)="copyUninstallCommand()"
+            [disabled]="!selectedVersion"
+          >
+            <vs-icon icon="copy"></vs-icon>
+            <vs-label label="settings.infrastructureSettings.copyCommand.uninstall"></vs-label>
+          </vs-button>
+
+        </div>
+      </form>
+    </vs-form>
+  </div>
+</vs-layout>

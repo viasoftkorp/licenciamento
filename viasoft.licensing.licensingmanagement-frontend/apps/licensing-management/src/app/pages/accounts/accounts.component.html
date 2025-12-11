@@ -1,0 +1,7 @@
+<vs-tabs-view-template>
+        <ng-container actions>
+          <vs-button (clickEvent)="add()" *isGranted="[policies.CreateAccount]" model="icon" icon="plus" label="common.add" />
+          <vs-button (clickEvent)="sync()" *isGranted="[policies.UpdateAccount]" model="icon" icon="rotate" label="accounts.sync" />
+        </ng-container>
+        <app-accounts-grid />
+</vs-tabs-view-template>

@@ -1,0 +1,15 @@
+<vs-button
+      model="icon"
+      icon="plus"
+      tooltip="common.new"
+      [matMenuTriggerFor]="menu"
+>
+</vs-button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="clickProduct()">
+      <vs-label label="products.product"></vs-label>
+  </button>
+  <button mat-menu-item (click)="clickApp()">
+      <vs-label label="apps.app"></vs-label>
+  </button>
+</mat-menu>

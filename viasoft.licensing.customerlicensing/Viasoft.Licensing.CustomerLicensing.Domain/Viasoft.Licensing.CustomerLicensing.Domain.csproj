@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <NoWarn>1701;1702;1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Viasoft.Core" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Core.AspNetCore" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Core.DDD" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Core.DDD.Application" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Core.Mapper" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Core.ServiceBus" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Data.Extensions" Version="4.12.52" />
+      <PackageReference Include="Viasoft.Data.Seeder" Version="4.12.52" />
+    </ItemGroup>
+    
+</Project>

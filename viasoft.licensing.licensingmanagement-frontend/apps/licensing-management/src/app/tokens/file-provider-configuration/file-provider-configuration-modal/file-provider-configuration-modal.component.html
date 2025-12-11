@@ -1,0 +1,20 @@
+<vs-layout>
+  <vs-label title label="file_provider.configurationTitle"></vs-label>
+  <div content>
+    <ng-container *ngIf="hasFinishedFileConfigurationRequest && !data?.appId">
+      <vs-input (click)="openAppSearch()" class="app-select" [ngModel]="selectedApp?.name" [readonly]="true" placeholder="filequota.selectedApp">
+        <vs-icon suffix icon="magnifying-glass" ></vs-icon>
+      </vs-input>
+    </ng-container>
+    <app-file-provider-configuration *ngIf="hasFinishedFileConfigurationRequest"
+      [configuration]="fileProviderConfiguration" (formChange)="fileProviderFormChanged($event)" [disabled]="!appId">
+    </app-file-provider-configuration>
+  </div>
+  <div footer align-right>
+    <vs-label *ngIf="fileConfigurationErrorDuringSave" model="error"
+      label="file_provider.form.errors.unknownErrorDuringSave"></vs-label>
+    <vs-button [disabled]="!form || form.invalid || (hasFinishedFileConfigurationRequest && !appId)" type="save" label="common.save"
+      (clickEvent)="insertOrUpdateFileConfiguration()"></vs-button>
+    <vs-button type="cancel" label="common.cancel" (clickEvent)="cancel()"></vs-button>
+  </div>
+</vs-layout>

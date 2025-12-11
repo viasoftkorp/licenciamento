@@ -1,0 +1,20 @@
+<vs-dialog>
+  <vs-label title label="Auditing.Modal.AuditingSeeMore"></vs-label>
+
+  <div content>
+    <vs-form>
+      <form *ngIf="form" [formGroup]="form">
+        <div class="flex-initial">
+          <div class="flex">
+            <vs-input formControlName="userName" placeholder="Auditing.UserName" [readonly]="true"></vs-input>
+            <vs-input formControlName="dateTime" placeholder="Auditing.DateTime" [readonly]="true"></vs-input>
+          </div>
+          <vs-input formControlName="type" placeholder="Auditing.Type" [readonly]="true"></vs-input>
+          <vs-input formControlName="actionName" placeholder="Auditing.ActionName" [readonly]="true"></vs-input>
+        </div>
+        <vs-textarea formControlName="details" placeholder="Auditing.Details" [readonly]="true"></vs-textarea>
+      </form>
+    </vs-form>
+  </div>
+
+</vs-dialog>

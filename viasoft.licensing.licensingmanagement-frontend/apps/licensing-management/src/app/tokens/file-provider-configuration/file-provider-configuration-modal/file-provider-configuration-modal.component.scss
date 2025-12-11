@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  vs-input.app-select {
+    margin: 0 16px;
+
+    .mat-mdc-form-field-icon-suffix vs-icon[icon="magnifying-glass"] {
+      cursor: pointer !important;
+    }
+  }
+}

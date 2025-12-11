@@ -1,0 +1,9 @@
+{
+    "folder": "cypress/integration",
+    "groups": [
+        {
+            "title": "Customer Licensing",
+            "value": "customer-licensing"
+        }
+    ]
+}

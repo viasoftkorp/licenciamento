@@ -1,0 +1,11 @@
+.product-name-cell-container {
+    .product-name-cell-fake-link {
+        color: #2196f3;
+
+        &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+    
+}

@@ -1,0 +1,34 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  .form-container {
+    flex: initial;
+    .tenant-quota-form-container {
+      margin-bottom: 12px;
+      .tenant-quota-form {
+        display: flex;
+        align-items: center;
+        place-content: flex-start;
+        .footer {
+          display: flex;
+          place-content: flex-end;
+        }
+      }
+      .tenant-quota-form + .form-errors {
+        margin-top: 8px;
+        margin-left: 16px;
+      }
+    }
+    .grid-container {
+      display: flex;
+      flex: auto;
+      min-height: 300px;
+      overflow: auto;
+      > vs-grid {
+        flex: auto;
+      }
+    }
+  }
+}

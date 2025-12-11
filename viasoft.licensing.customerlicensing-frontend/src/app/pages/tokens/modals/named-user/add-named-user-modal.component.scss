@@ -1,0 +1,12 @@
+:host {
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

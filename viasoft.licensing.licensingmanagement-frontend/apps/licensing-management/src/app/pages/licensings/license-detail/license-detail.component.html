@@ -1,0 +1,127 @@
+<vs-form>
+  <div content>
+    <form [formGroup]="form" *ngIf="form" group-4>
+      <vs-input
+        formControlName="identifier"
+        placeholder="licensings.identifier"
+        errorMessage="common.error.field_is_required"
+        [required]="true"
+      >
+    <div suffix>
+      <vs-button icon="copy" tooltip="licensings.copyTenantIdTooltip" (clickEvent)="copyToTheClipboard(this.license.identifier)"></vs-button>
+    </div>
+  </vs-input>
+
+      <vs-search-input
+        [formGroup]="form"
+        formControlName="accountName"
+        placeholder="licensings.accountId"
+        errorMessage="common.error.field_is_required"
+        (search)="onAccountSearch()"
+        [required]="true"
+      ></vs-search-input>
+
+      <vs-input
+        formControlName="licensedCnpjs"
+        placeholder="licensings.cnpjCpf"
+        [errorMessage]="form.get('licensedCnpjs').errors?.cpfAndCnpjWithCommasInvalid ? 'common.error.could_not_find_cnpj' : 'common.error.field_is_required'"
+        [required]="true"
+      ></vs-input>
+
+      <vs-select
+        formControlName="status"
+        placeholder="licensings.status"
+        errorMessage="common.error.field_is_required"
+        [options]="optionsSelect"
+        [tooltip]="controlFieldsRelatedSagaInfo.statusTooltip"
+        [required]="true"
+      ></vs-select>
+
+      <br group-4 />
+      <vs-input
+        formControlName="administratorEmail"
+        placeholder="licensings.administratorEmail"
+        [required]="true"
+        [errorMessage]="'licensings.invalidEmail'"
+      >
+      <div matSuffix>
+        <vs-icon
+        [icon]="controlFieldsRelatedSagaInfo.emailSuffixIcon"
+        [style]="controlFieldsRelatedSagaInfo.emailSuffixIconColor"
+        [tooltip]="controlFieldsRelatedSagaInfo.emailTooltip"
+        >
+        </vs-icon>
+      </div>
+    </vs-input>
+
+
+      <vs-datepicker
+        [formGroup]="form"
+        controlName="expirationDateTime"
+        placeholder="licensings.expirationDateTime"
+        errorMessage="common.error.expiration_date_must_be_valid"
+      ></vs-datepicker>
+      <vs-input
+        formControlName="hardwareId"
+        placeholder="licensings.hardwareId"
+      ></vs-input>
+
+      <vs-textarea
+        formControlName="notes"
+        placeholder="licensings.notes"
+        rows="4"
+      ></vs-textarea>
+
+      <span></span>
+      <span></span>
+      <span></span>
+    </form>
+  </div>
+</vs-form>
+
+<vs-layout>
+  <div actions *ngIf="hasPoliciesForUpdateDetails && id">
+    <vs-button
+      *ngIf="!isCurrentTabProduct"
+      [disabled]="isCurrentTabInfrastructureConfiguration || !id"
+      model="icon"
+      icon="plus"
+      tooltip="common.new"
+      (clickEvent)="openModal()"
+    >
+    </vs-button>
+    <app-add-license-dropdown
+      *ngIf="isCurrentTabProduct"
+      (onClick)="openModalProduct($event)"
+    ></app-add-license-dropdown>
+  </div>
+
+  <div content>
+    <ng-container *ngIf="initialized">
+      <vs-tab-group *ngIf="id" content endRouteBase="licensings/">
+        <div *vsTabLabel="{ title: 'products.products', route: id }"></div>
+        <div
+          *vsTabLabel="{ title: 'filequota.title', route: id + '/file-quota' }"
+        ></div>
+        <div
+          *vsTabLabel="{
+            title: 'infrastructureConfiguration.title',
+            route: id + '/infrastructure-configuration'
+          }"
+        ></div>
+        <div
+          *vsTabLabel="{
+            title: 'Organization.Unit.Title',
+            route: id + '/organization'
+          }"
+        ></div>
+        <div
+          *vsTabLabel="{
+            title: 'licensings.licensesServer.title',
+            route: id + '/licenses-server'
+          }"
+        ></div>
+      </vs-tab-group>
+    </ng-container>
+  </div>
+</vs-layout>

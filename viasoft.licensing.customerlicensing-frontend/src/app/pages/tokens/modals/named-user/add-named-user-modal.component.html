@@ -1,0 +1,44 @@
+<vs-dialog>
+    <vs-icon
+      icon="user-tag"
+    ></vs-icon>
+    <vs-label
+        title [label]="title"
+    ></vs-label>
+    <vs-label
+      info
+      *ngIf="!data.isCreate"
+      model="small_title"
+    >{{ 'LicensingInfo.CurrentUser' | translate }}: <b>{{currentUser}}</b>
+    </vs-label>
+    <div content>
+        <form [formGroup]="form">
+          <vs-autocomplete-select
+            formControlName="userSelect"
+            placeholder="LicensingInfo.Modal.SearchUser"
+            [maxDropSize]="autocompleteMaxDropSize"
+            [get]="autocompleteGet"
+            [getName]="getAutocompleteNames"
+            (selectionChangeEvent)="onUserSelected($event)"
+          ></vs-autocomplete-select>
+          <vs-input
+            *ngIf="isOfflineMode"
+            formControlName="deviceId"
+            placeholder="LicensingInfo.Modal.Identifier"
+          ></vs-input>
+        </form>
+    </div>
+    <div class="actions" footer>
+      <vs-button
+        type="save"
+        label="LicensingInfo.Modal.Save"
+        [disabled]="!isFormValid"
+        (clickEvent)="save()"
+      ></vs-button>
+      <vs-button
+        type="cancel"
+        label="LicensingInfo.Modal.Cancel"
+        (clickEvent)="cancel()"
+      ></vs-button>
+    </div>
+  </vs-dialog>

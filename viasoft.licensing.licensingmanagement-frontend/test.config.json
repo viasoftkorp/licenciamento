@@ -1,0 +1,9 @@
+{
+    "folder": "cypress/integration",
+    "groups": [
+        {
+            "title": "license-management",
+            "value": ""
+        }
+    ]
+}

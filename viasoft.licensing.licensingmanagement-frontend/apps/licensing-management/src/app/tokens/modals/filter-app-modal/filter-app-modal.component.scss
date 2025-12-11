@@ -1,0 +1,12 @@
+:host {
+    vs-dialog {
+        vs-grid {
+            min-height: 50%;
+            height: 100%;
+            width: 100%;
+        }
+        vs-label[title] {
+            font-weight: 500;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+<vs-layout>
+  <vs-icon icon="circle-question" iconSize="large"></vs-icon>
+  <vs-label title model="main_title" [label]="title"></vs-label>
+  <div content>
+    <ng-container *ngIf="infoType === useSimpleHardwareId">
+      <p>{{'licensings.licensesServer.useSimpleHardwareIdInfoContent' | translate}}</p>
+    </ng-container>
+  </div>
+  <div footer align-right>
+    <vs-button type="save" (clickEvent)="cancel()" label="common.ok"></vs-button>
+  </div>
+</vs-layout>

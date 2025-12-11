@@ -1,0 +1,12 @@
+:host {
+    vs-dialog {
+
+        div[content] {
+            vs-grid {
+                flex: auto;
+                padding-right: 12px;
+                overflow-x: hidden;
+            }
+        }
+    }
+}

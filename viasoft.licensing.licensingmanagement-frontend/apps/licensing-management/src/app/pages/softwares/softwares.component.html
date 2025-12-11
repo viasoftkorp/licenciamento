@@ -1,0 +1,13 @@
+<vs-tabs-view-template>
+  <ng-container actions>
+    <vs-button
+      (clickEvent)="add()"
+      *isGranted="[policies.CreateSoftware]"
+      model="icon"
+      icon="plus"
+      label="common.add"
+    />
+  </ng-container>
+
+  <app-software-grid />
+</vs-tabs-view-template>

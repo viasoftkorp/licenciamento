@@ -1,0 +1,9 @@
+<vs-dialog>
+  <vs-label title label="filequota.addApp.title"></vs-label>
+  <div info>
+    <vs-search placeholder="filequota.addApp.search"(search)="search($event)"></vs-search>
+  </div>
+  <div content>
+    <vs-grid class="heigth-fixed" [options]="gridOptions"></vs-grid>
+  </div>
+</vs-dialog>

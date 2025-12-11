@@ -1,0 +1,51 @@
+<vs-dialog>
+  <vs-icon
+    icon="user-plus"
+  ></vs-icon>
+  <vs-label
+    title
+    [label]="title"
+    classes="font-weight: 500;"
+  ></vs-label>
+  <vs-label
+    info
+    *ngIf="!data.isCreate"
+    model="small_title"
+  >
+  {{'licensings.currentUser' | translate}} <span style="font-weight: 600;">{{currentUser}}</span>
+</vs-label>
+
+  <div content>
+    <vs-form>
+      <form [formGroup]="form" group-1>
+        <vs-autocomplete-select
+          formControlName="userSelect"
+          placeholder="licensings.searchUser"
+          [get]="getUserSelectAutocompleteOptions"
+          [getName]="getUserSelectAutocompleteName"
+          (optionSelected)="onUserSelected($event)"
+          [required]="true"
+        ></vs-autocomplete-select>
+        <vs-input
+          *ngIf="isOfflineMode"
+          formControlName="deviceId"
+          placeholder="licensings.identifier"
+        ></vs-input>
+      </form>
+    </vs-form>
+  </div>
+
+  <div footer>
+    <vs-button
+      type="save"
+      label="common.save"
+      [disabled]="!isFormValid"
+      (clickEvent)="save()"
+    ></vs-button>
+    <vs-button
+      type="cancel"
+      label="common.cancel"
+      (clickEvent)="cancel()"
+    ></vs-button>
+  </div>
+</vs-dialog>

@@ -1,0 +1,18 @@
+
+<vs-tabs-view-template>
+
+    <ng-container actions>
+        <vs-button [disabled]="isButtonDisabled"
+                   model="icon"
+                   (clickEvent)="updateGateway()"
+                   tooltip="settings.save"
+                   label="settings.save"
+                   icon="save">
+        </vs-button>
+    </ng-container>
+
+  <vs-tab-group content endRouteBase="">
+    <div *vsTabLabel="{ title: 'settings.infrastructureSettings.infrastructureSettings', route: '/'}"></div>
+  </vs-tab-group>
+
+</vs-tabs-view-template>

@@ -1,0 +1,31 @@
+<ng-container *ngIf="finishAuthorizationRequest">
+  <form [formGroup]="form" class="bundles-form" *ngIf="form">
+    <vs-input formControlName="name" placeholder="products.name" errorMessage="common.error.field_is_required" [required]="true"></vs-input>
+
+    <vs-input formControlName="identifier" placeholder="products.identifier" errorMessage="common.error.field_is_required" [required]="true">
+    </vs-input>
+
+    <vs-search-input [formGroup]="form" formControlName="software" placeholder="products.software"
+      errorMessage="common.error.field_is_required" [disabled]="!!id" (search)="onSoftwareSearch()"
+      (searchCleaned)="onSoftwareSearchCleaned()" [required]="true"></vs-search-input>
+
+    <vs-checkbox formControlName="isActive">{{'products.active' | translate}}</vs-checkbox>
+
+    <vs-checkbox formControlName="isCustom">{{'products.custom' | translate}}</vs-checkbox>
+  </form>
+  <vs-header>
+    <vs-icon icon="server"></vs-icon>
+    <vs-label title label="apps.apps"></vs-label>
+    <div actions>
+      <vs-button *ngIf="id && policies.updateBundle; else disabledButton"  model="icon" icon="plus" tooltip="common.new" (click)="newAppOnClick()">
+      </vs-button>
+      <ng-template #disabledButton>
+        <vs-button  *ngIf="policies.updateBundle" disabled model="icon" icon="plus" tooltip="common.new"></vs-button>
+      </ng-template>
+    </div>
+  </vs-header>
+</ng-container>
+
+<ng-container *ngIf="finishAuthorizationRequest && isDomainLoaded">
+  <vs-grid [options]="grid"></vs-grid>
+</ng-container>

@@ -1,0 +1,18 @@
+:host {
+    .phone-error-message {
+        font-size: 0.75rem;
+        color: red;
+        margin: 0;
+    }
+    vs-dialog {
+        div[content] {
+            vs-form {
+                flex: none;
+                .form_header {
+                    display: flex;
+                    flex-direction: row;
+                }
+            }
+        }
+    }
+}

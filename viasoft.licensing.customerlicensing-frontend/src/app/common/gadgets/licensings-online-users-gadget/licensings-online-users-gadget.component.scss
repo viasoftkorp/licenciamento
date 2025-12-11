@@ -1,0 +1,9 @@
+:host {
+    max-height: 11vh;
+
+    ::ng-deep {
+        .vs-gadget > .header {
+            height: 0;
+        }
+    }
+}

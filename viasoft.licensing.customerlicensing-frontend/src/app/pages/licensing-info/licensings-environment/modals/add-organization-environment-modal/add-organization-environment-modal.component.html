@@ -1,0 +1,61 @@
+<vs-layout>
+  <vs-label title model="title" label="Environment.Organization.AddEnvironmentModal.Title"></vs-label>
+  <div content>
+    <vs-spinner *ngIf="!form"></vs-spinner>
+
+    <form *ngIf="form" [formGroup]="form">
+      <vs-input formControlName="name" placeholder="Environment.Organization.AddEnvironmentModal.Name" required></vs-input>
+      <vs-input formControlName="description" placeholder="Environment.Organization.AddEnvironmentModal.Description"></vs-input>
+      <vs-input *ngIf="form.get('isDesktop').value && form.get('databaseName').value" 
+      formControlName="desktopDatabaseVersion" 
+      placeholder="Environment.Organization.AddEnvironmentModal.Version" 
+      errorMessage="Environment.Organization.AddEnvironmentModal.Errors.InvalidDbVersion" 
+      (click)="dbVersionUpdateWarning()">
+      </vs-input>
+      <vs-checkbox formControlName="isProduction" label="Environment.Organization.AddEnvironmentModal.IsProduction">
+      </vs-checkbox>
+      <vs-checkbox formControlName="isMobile" label="Environment.Organization.AddEnvironmentModal.IsMobile">
+      </vs-checkbox>
+      <vs-checkbox formControlName="isWeb" label="Environment.Organization.AddEnvironmentModal.IsWeb"></vs-checkbox>
+      <vs-checkbox formControlName="isDesktop" label="Environment.Organization.AddEnvironmentModal.IsDesktop"></vs-checkbox>
+      <vs-input *ngIf="form.get('isDesktop').value" formControlName="databaseName"
+      placeholder="Environment.Organization.AddEnvironmentModal.DatabaseName" 
+      (click)="dbNameUpdateWarning()"
+      errorMessage="Environment.Organization.AddEnvironmentModal.Errors.InvalidDbNameRegexValidate"
+      ></vs-input>
+      <vs-label *ngIf="form.get('databaseName').dirty && form.getError('emptyDatabase')" model="error"
+        label="Environment.Organization.AddEnvironmentModal.Errors.emptyDatabase"></vs-label>
+      <vs-label *ngIf="errorMessage" model="error" [label]="errorMessage"></vs-label>
+    </form>
+
+  </div>
+  <div footer align-right>
+    <vs-button type="save" label="Environment.Organization.AddEnvironmentModal.Save" [disabled]="!form || form.invalid"
+      (clickEvent)="createOrUpdateEnvironment()"></vs-button>
+    <vs-button type="cancel" label="Environment.Organization.AddEnvironmentModal.Cancel" (clickEvent)="closeModal()"></vs-button>
+  </div>
+</vs-layout>
+
+<ng-template #updateDbNameWarnMessage>
+  <vs-label label="Environment.Organization.AddEnvironmentModal.Warnings.updateDatabaseName"></vs-label>
+  <form *ngIf="form" [formGroup]="form" class="checkboxUpdateDbConfirm">
+    <vs-checkbox formControlName="databaseNameUpdateConfirm" label="Environment.Organization.AddEnvironmentModal.Warnings.UpdateDbConfirm">
+    </vs-checkbox>
+  </form>
+</ng-template>
+
+<ng-template #updateDbVersionWarnMessage>
+  <vs-label label="Environment.Organization.AddEnvironmentModal.Warnings.updateDatabaseVersion"></vs-label>
+  <form *ngIf="form" [formGroup]="form" class="checkboxUpdateDbConfirm">
+    <vs-checkbox  formControlName="databaseVersionUpdateConfirm" label="Environment.Organization.AddEnvironmentModal.Warnings.UpdateDbConfirm">
+    </vs-checkbox>
+  </form>
+</ng-template>
+
+<ng-template #updateDbNameActionTemplate let-closeModal="closeModal">
+  <vs-button type="save" [disabled]="!isUpdateDbNameChecked" label="SDK.MessageDialog.Ok" (clickEvent)="closeModal()" (clickEvent)="releaseDbNameUpdate()"></vs-button>
+</ng-template>
+
+<ng-template #updateDbVersionActionTemplate let-closeModal="closeModal">
+  <vs-button type="save" [disabled]="!isUpdateDbVersionChecked" label="SDK.MessageDialog.Ok" (clickEvent)="closeModal()" (clickEvent)="releaseDbVersionUpdate()"></vs-button>
+</ng-template>

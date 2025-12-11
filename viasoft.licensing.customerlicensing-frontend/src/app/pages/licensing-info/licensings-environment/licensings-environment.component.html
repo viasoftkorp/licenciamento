@@ -1,0 +1,9 @@
+<vs-tabs-view-template *isGranted="policies.ReadEnvironments">
+
+  <ng-container actions>
+    <vs-button icon="plus" model="icon" label="Environment.Organization.AddOrganizationUnit" (click)="addOrganizationalUnit()" [disabled]="!canUpdate"></vs-button>
+  </ng-container>
+
+  <app-licensing-environment-organizational></app-licensing-environment-organizational>
+
+</vs-tabs-view-template>

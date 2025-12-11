@@ -1,0 +1,14 @@
+{
+    "clients": [
+        {
+            "name": "@viasoft/customer-licensing",
+            "baseUrl": "http://.168.99.1:14419/swagger/1.0.0.0/swagger.json",
+            "outPath": "client/customer-licensing"
+        },
+        {
+            "name": "@viasoft/dashboard",
+            "baseUrl": "http://192.168.99.1:14646/swagger/1.0.0.0/swagger.json",
+            "outPath": "client/dashboard"
+        }
+    ]
+}
