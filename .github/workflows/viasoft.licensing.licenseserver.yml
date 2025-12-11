@@ -1,7 +1,7 @@
-name: Build viasoft.licensing.licenseserver Service via Jenkins
+name: Build Viasoft.Licensing.LicenseServer Service via Jenkins
 
 env:
-  SERVICE_NAME: "viasoft.licensing.licenseserver"
+  SERVICE_NAME: "Viasoft.Licensing.LicenseServer"
 
 on:
   push:
