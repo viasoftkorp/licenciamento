@@ -42,6 +42,7 @@ def publishProduction  = true // Caso seu serviço não rode em produção, set 
 def jnlpImageTag = "1.1.x"
 
 def buildType = "frontend"
+def githubRepo = "licenciamento"
 
 def data = """ {
     "serviceName": "${env.JOB_NAME.replaceFirst(/^([^\/]+?)\/.*$/, '$1')}",
@@ -75,13 +76,14 @@ def data = """ {
     "skipTests": ${skipTests},
     "runAsContainer": ${runAsContainer},
     "shouldLogEnvVariables": ${shouldLogEnvVariables},
-    "shouldLogVersions": ${shouldLogVersions}
+    "shouldLogVersions": ${shouldLogVersions},
+    "githubRepository": "${githubRepo}"
 }
 """
 
 request = httpRequest httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: data,
-                        url: "${env.GENERATE_JENKINSFILE_URL_V2}",
+                        url: "${env.GENERATE_JENKINSFILE_URL_V3}",
                         customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]]
 evaluate(request.content)
