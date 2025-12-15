@@ -1,4 +1,4 @@
-{
+﻿{
   "HttpPort": "1506",
   "UrlGateway": "http://host.docker.internal:9999",
   "AspNetCoreEnvironment": "Development",

@@ -6,9 +6,11 @@
     
     <ItemGroup>
         <PackageReference Include="DeviceId.Windows.Wmi" Version="6.2.0" />
+        <PackageReference Include="IdentityModel" Version="6.0.0" />
         <PackageReference Include="LiteDB" Version="5.0.12" />
-        <PackageReference Include="Viasoft.Core.ApiClient" Version="4.8.1" />
-        <PackageReference Include="Viasoft.Core.IoC" Version="4.8.1" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.3" />
+        <PackageReference Include="Viasoft.Core.ApiClient" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.IoC" Version="4.12.40" />
     </ItemGroup>
 
 </Project>

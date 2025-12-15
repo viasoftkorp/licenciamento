@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicenseSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicenseServer.Host", "Viasoft.Licensing.LicenseServer.Host\Viasoft.Licensing.LicenseServer.Host.csproj", "{9CD1E2AA-B0B6-45B2-A07E-EA1307BBE3D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicenseServer.Domain.Old", "Viasoft.Licensing.LicenseServer.Domain.Old\Viasoft.Licensing.LicenseServer.Domain.Old.csproj", "{268D601A-3BDB-4899-91C7-FE57AB2E4A5E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicenseServer.Shared", "Viasoft.Licensing.LicenseServer.Shared\Viasoft.Licensing.LicenseServer.Shared.csproj", "{7E2017FE-1CFB-4E0B-B649-401842A82C0F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viasoft.Licensing.LicenseServer.UnitTest.New", "Viasoft.Licensing.LicenseServer.UnitTest.New\Viasoft.Licensing.LicenseServer.UnitTest.New.csproj", "{2F083B9D-DADE-41A6-A2EA-AE0585992D40}"
@@ -24,10 +22,6 @@ Global
 		{9CD1E2AA-B0B6-45B2-A07E-EA1307BBE3D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CD1E2AA-B0B6-45B2-A07E-EA1307BBE3D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CD1E2AA-B0B6-45B2-A07E-EA1307BBE3D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{268D601A-3BDB-4899-91C7-FE57AB2E4A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{268D601A-3BDB-4899-91C7-FE57AB2E4A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{268D601A-3BDB-4899-91C7-FE57AB2E4A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{268D601A-3BDB-4899-91C7-FE57AB2E4A5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7E2017FE-1CFB-4E0B-B649-401842A82C0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E2017FE-1CFB-4E0B-B649-401842A82C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E2017FE-1CFB-4E0B-B649-401842A82C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -17,10 +17,10 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5" />
         <PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="2.1.2" />
-        <PackageReference Include="Viasoft.Core.DDD" Version="4.8.1" />
-        <PackageReference Include="Viasoft.Core.DDD.Application" Version="4.8.1" />
-        <PackageReference Include="Viasoft.Core.Mapper" Version="4.8.1" />
-        <PackageReference Include="Viasoft.Core.ServiceBus" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.DDD" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.DDD.Application" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.Mapper" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.ServiceBus" Version="4.12.40" />
     </ItemGroup>
 
     <ItemGroup>

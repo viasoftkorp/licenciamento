@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Viasoft.Licensing.LicenseServer.Domain.Catalogs;
@@ -11,16 +12,16 @@ namespace Viasoft.Licensing.LicenseServer.Domain.BackgroundServices
 {
     public class ReleaseLicenseBasedOnHeartbeatBackgroundService: BackgroundService
     {
-        private readonly ITenantCatalog _tenantCatalog;
         private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<ReleaseLicenseBasedOnHeartbeatBackgroundService> _logger;
 
-        public ReleaseLicenseBasedOnHeartbeatBackgroundService(IConfiguration configuration, ITenantCatalog tenantCatalog, 
-            ILogger<ReleaseLicenseBasedOnHeartbeatBackgroundService> logger)
+        public ReleaseLicenseBasedOnHeartbeatBackgroundService(IConfiguration configuration,
+            ILogger<ReleaseLicenseBasedOnHeartbeatBackgroundService> logger, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _tenantCatalog = tenantCatalog;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -38,13 +39,17 @@ namespace Viasoft.Licensing.LicenseServer.Domain.BackgroundServices
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                try
-                {
-                    await _tenantCatalog.ReleaseLicenseBasedOnHeartbeat();
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Could release licensed based on heartbeat");
+                await using (var scope = _serviceProvider.CreateAsyncScope())
+                {   
+                    try
+                    {
+                        var tenantCatalog = scope.ServiceProvider.GetRequiredService<ITenantCatalog>();
+                        await tenantCatalog.ReleaseLicenseBasedOnHeartbeat();
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e, "Could release licensed based on heartbeat");
+                    }
                 }
                 await Task.Delay(recurFrequencyInMilliseconds, cancellationToken);
             }
