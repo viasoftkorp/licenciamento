@@ -37,6 +37,8 @@ jobs:
   start-jenkins-build:
     runs-on: self-hosted
 
+    needs: start-jenkins-scan
+
     steps:
       - name: Print info
         run: echo "Changes detected in ${{ env.SERVICE_NAME }} — Triggering Jenkins Build."
