@@ -1,7 +1,7 @@
 def publishProduction = true // Caso seu serviço não rode em produção, set para false
+def publishProdImageOnRelease = false // OPCIONAL
 
 def buildType = "csharp"
-def githubRepo = "licenciamento"
 
 def data = """ {
     "serviceName": "${env.JOB_NAME.replaceFirst(/^([^\/]+?)\/.*$/, '$1')}",
@@ -9,6 +9,8 @@ def data = """ {
     "buildType": "${buildType}",
     "branchName": "${env.BRANCH_NAME}",
     "shouldPublishProduction": ${publishProduction},
+    "publishProdImageOnRelease": ${publishProdImageOnRelease},
+    "composeName": "${composeName}",
     "publishServerIp": "${env.IP_SERVICES_1_ARM}",
     "secretsToImport": [
         "LS_UPDATE_KEY",
@@ -22,13 +24,12 @@ def data = """ {
         "/p:Authority=https://gateway.korp.com.br/oauth",
         "/p:LicensingManagementSecret={{ LS_LICENSING_SECRET }}",
         "/p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }}"
-    ],
-    "githubRepository": "${githubRepo}"
+    ]
 }
 """
 request = httpRequest httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: data,
-                        url: "${env.GENERATE_JENKINSFILE_URL_V3}",
+                        url: "${env.GENERATE_JENKINSFILE_URL_V2}",
                         customHeaders: [[name: 'MiddlewareToken', value: env.VIASOFT_JENKINS_MIDDLEWARE_TOKEN]]
 evaluate(request.content)

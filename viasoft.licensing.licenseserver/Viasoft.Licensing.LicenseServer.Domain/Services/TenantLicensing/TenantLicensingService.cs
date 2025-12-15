@@ -14,7 +14,7 @@ using Viasoft.Licensing.LicenseServer.Shared.Services.HardwareId;
 
 namespace Viasoft.Licensing.LicenseServer.Domain.Services.TenantLicensing
 {
-    public class TenantLicensingService: ITenantLicensingService, ITransientDependency
+    public class TenantLicensingService: ITenantLicensingService, ISingletonDependency
     {
         private readonly ILicenseServerRepository _licenseServerRepository;
         private readonly IExternalLicensingManagementService _externalLicensingManagementService;

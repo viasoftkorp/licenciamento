@@ -1,18 +1,9 @@
-using System;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Viasoft.Core.API.Administration.Extensions;
 using Viasoft.Core.API.Authentication.Extensions;
-using Viasoft.Core.API.Authorization.Extensions;
-using Viasoft.Core.API.Emailing.Extensions;
 using Viasoft.Core.API.EmailTemplate.Extensions;
 using Viasoft.Core.API.LicensingManagement.Extensions;
 using Viasoft.Core.API.Reporting.Extensions;
@@ -20,16 +11,15 @@ using Viasoft.Core.API.TenantManagement.Extensions;
 using Viasoft.Core.API.UserProfile.Extensions;
 using Viasoft.Core.ApiClient.Extensions;
 using Viasoft.Core.AspNetCore.Extensions;
-using Viasoft.Core.Authorization.Abstractions.Services;
 using Viasoft.Core.Authorization.AspNetCore.Extensions;
+using Viasoft.Core.Authorization.Services;
 using Viasoft.Core.Caching.DistributedCache;
 using Viasoft.Core.DDD.Extensions;
+using Viasoft.Core.Extensions;
 using Viasoft.Core.Identity.AspNetCore.Extensions;
-using Viasoft.Core.Identity.Options;
 using Viasoft.Core.IoC.Extensions;
 using Viasoft.Core.Mapper.Extensions;
 using Viasoft.Core.MultiTenancy.AspNetCore.Extensions;
-using Viasoft.Core.MultiTenancy.Options;
 using Viasoft.Core.Service;
 using Viasoft.Core.ServiceBus.AspNetCore.Extensions;
 using Viasoft.Core.ServiceBus.SQLServer.Extensions;
@@ -37,7 +27,9 @@ using Viasoft.Core.ServiceDiscovery.Extensions;
 using Viasoft.Core.ServiceDiscovery.Options;
 using Viasoft.Licensing.LicenseServer.Domain.Classes;
 using Viasoft.Licensing.LicenseServer.Domain.Extensions;
-using Viasoft.Licensing.LicenseServer.Domain.InMemoryCache;
+using Viasoft.Licensing.LicenseServer.Domain.Old.Extensions;
+using Viasoft.Licensing.LicenseServer.Domain.Old.InMemoryCache;
+using Viasoft.Licensing.LicenseServer.Domain.Old.LegacyAcessTokenProvider;
 using Viasoft.Licensing.LicenseServer.Domain.Repositories;
 using Viasoft.Licensing.LicenseServer.Domain.Services.TenantDatabaseMapping;
 using Viasoft.Licensing.LicenseServer.Host.HostedServices;
@@ -61,8 +53,8 @@ namespace Viasoft.Licensing.LicenseServer.Host
         {
             _configuration = configuration;
         }
-        
-                private void ConfigureServicesLegacy(IServiceCollection serviceCollection)
+
+        private void ConfigureServicesLegacy(IServiceCollection serviceCollection)
         {
             if (_configuration.GetForceLegacyDatabaseEngine())
                 serviceCollection.AddTransient<ILicenseServerRepository, LicenseServerRepositoryOnPremise>();
@@ -72,7 +64,12 @@ namespace Viasoft.Licensing.LicenseServer.Host
             serviceCollection
                 .AddHostedService<ConsulProvider>()
                 .AddApiClient(_configuration)
-                .AddMultiTenancy(MultiTenancyOptions.Default().CompanyNotRequired().TenantNotRequired().EnvironmentNotRequired())
+                .AddMultiTenancy(options =>
+                {
+                    options.MustUseCompanyPredicate = _ => false;
+                    options.MustUseMultiTenancyPredicate = _ => false;
+                    options.MustUseEnvironmentPredicate = _ => false;
+                })
                 .AddDomainDrivenDesign()
                 .AddAutoMapper()
                 .AddMemoryCache()
@@ -84,7 +81,10 @@ namespace Viasoft.Licensing.LicenseServer.Host
                 .AddReportingApi()
                 .AddTenantManagementApi()
                 .AddUserProfileApi()
-                .AddUserIdentity(UserIdentityOptions.Default().UserNotRequired())
+                .AddUserIdentity(options =>
+                {
+                    options.MustUseUserIdentityPredicate = _ => false;
+                })
                 .AddAuthorizations(_configuration)
                 .AspNetCoreDefaultConfiguration(options =>
                 {
@@ -99,11 +99,11 @@ namespace Viasoft.Licensing.LicenseServer.Host
                 serviceCollection.Remove(s);
             }
             serviceCollection
+                .AddTransient<IAccessTokenProvider, LegacyAcessTokenProvider>()
                 .AddTransient<IDistributedCacheService, InMemoryCacheService>()
                 .AddSingleton<ITenantDatabaseMappingProvider, TenantDatabaseMappingFileSettingsProvider>()
                 .AddSwaggerGen(options => options.CustomSchemaIds(c => c.FullName));
         }
-
 
         private void ConfigureServicesWeb(IServiceCollection serviceCollection)
         {
@@ -120,21 +120,27 @@ namespace Viasoft.Licensing.LicenseServer.Host
                 .AddServiceBusSqlServerProvider()
                 .AddServiceMesh()
                 .AddApiClient(_configuration)
-                .AddMultiTenancy(MultiTenancyOptions.Default().CompanyNotRequired().TenantNotRequired().EnvironmentNotRequired())
+                .AddMultiTenancy(options =>
+                {
+                    options.MustUseCompanyPredicate = _ => false;
+                    options.MustUseMultiTenancyPredicate = _ => false;
+                    options.MustUseEnvironmentPredicate = _ => false;
+                })
                 .AddDomainDrivenDesign()
                 .AddAutoMapper()
                 .AddMemoryCache()
                 .RegisterDependenciesByConvention()
                 .AddAdministrationApi()
                 .AddAuthenticationApi()
-                .AddAuthorizationApi()
                 .AddEmailTemplateApi()
-                .AddEmailingApi()
                 .AddLicensingManagementApi()
                 .AddReportingApi()
                 .AddTenantManagementApi()
                 .AddUserProfileApi()
-                .AddUserIdentity(UserIdentityOptions.Default().UserNotRequired())
+                .AddUserIdentity(options =>
+                {
+                    options.MustUseUserIdentityPredicate = _ => false;
+                })
                 .AddAuthorizations(_configuration)
                 .AspNetCoreDefaultConfiguration(options =>
                 {
@@ -142,26 +148,26 @@ namespace Viasoft.Licensing.LicenseServer.Host
                 }, ServiceConfiguration, _configuration);
 
             serviceCollection
-                .AddSingleton<ITenantDatabaseMappingProvider, TenantDatabaseMappingFileSettingsProvider>()
+                .AddSingleton<ITenantDatabaseMappingProvider, TenantDatabaseMappingTenantManagementProvider>()
                 .AddSwaggerGen(options => options.CustomSchemaIds(c => c.FullName));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
             if (DefaultConfigurationConsts.IsRunningAsLegacy)
             {
                 ConfigureServicesLegacy(services);
             }
             else
                 ConfigureServicesWeb(services);
-            
+
             services.Configure<ServiceDiscoveryOptions>(options => options.ServiceDiscoveryTagsFunc = tags =>
             {
                 tags.Add("urlprefix-/licensing/license-server/");
             });
             
             services
+                .AddHostedServices(typeof(Domain.Old.Classes.AppLicenseConsumer).Assembly)
                 .AddHostedServices(typeof(AppLicenseConsumer).Assembly);
         }
         

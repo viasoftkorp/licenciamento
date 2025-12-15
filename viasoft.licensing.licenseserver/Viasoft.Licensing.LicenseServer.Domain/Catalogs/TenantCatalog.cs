@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Viasoft.Core.IoC.Abstractions;
 using Viasoft.Licensing.LicenseServer.Domain.Classes.LicenseTenantStatus;
@@ -25,7 +23,7 @@ using Viasoft.Licensing.LicenseServer.Shared.Services.HardwareId;
 
 namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
 {
-    public class TenantCatalog : ITenantCatalog, ITransientDependency
+    public class TenantCatalog : ConcurrentDictionary<Guid, ILicensingManagerService>, ITenantCatalog, ISingletonDependency
     {
         private readonly ITenantLicensingService _tenantLicensingService;
         private readonly SemaphoreSlim _semaphoreSlim;
@@ -33,28 +31,19 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
         private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _semaphoreSlims;
         private readonly ILogger<TenantCatalog> _logger;
         private readonly ILicensingManagerServiceFactory _licensingManagerServiceFactory;
-        private readonly IMemoryCache _memoryCache;
 
-        private const string LicenseCacheKeyPrefix = "tenant_manager_server_license_";
-        private const string TenantsCacheKeyPrefix = "tenant_manager_server_active_tenants";
-        
-        public TenantCatalog(
-            ITenantLicensingService tenantLicensingService, 
-            IProvideHardwareIdService provideHardwareIdService, 
-            ILogger<TenantCatalog> logger, 
-            ILicensingManagerServiceFactory licensingManagerServiceFactory,
-            IMemoryCache memoryCache)
+        public TenantCatalog(ITenantLicensingService tenantLicensingService, IProvideHardwareIdService provideHardwareIdService, ILogger<TenantCatalog> logger, 
+            ILicensingManagerServiceFactory licensingManagerServiceFactory)
         {
             // Não modificar o tipo do param Logger pois ele é passado para outras classes...
             _provideHardwareIdService = provideHardwareIdService;
             _logger = logger;
             _licensingManagerServiceFactory = licensingManagerServiceFactory;
-            _memoryCache = memoryCache;
             _semaphoreSlims = new ConcurrentDictionary<Guid, SemaphoreSlim>();
             _tenantLicensingService = tenantLicensingService;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
-
+        
         public async Task<List<LicenseTenantStatusCurrent>> GetAllTenantCurrentLicenseStatus()
         {
             if (!DefaultConfigurationConsts.IsRunningAsLegacy)
@@ -74,7 +63,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
             Dictionary<Guid, ILicensingManagerService> localCatalog;
             try
             {
-                localCatalog = GetAllCachedTenants();
+                localCatalog = this.ToDictionary(pair => pair.Key, pair => pair.Value);
             }
             finally
             {
@@ -114,8 +103,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
         {
             EnsureTenantInSemaphores(tenantId);
             
-            var cacheKey = GetTenantCacheKey(tenantId);
-            if (_memoryCache.TryGetValue(cacheKey, out ILicensingManagerService service))
+            if (TryGetValue(tenantId, out var service))
             {
                 var licensingManagerSemaphore = _semaphoreSlims[tenantId];
                 await licensingManagerSemaphore.WaitAsync();
@@ -150,8 +138,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
         
         public async Task RefreshTenantLicensing(LicensingDetailsUpdated licensingDetailsUpdated)
         {
-            var cacheKey = GetTenantCacheKey(licensingDetailsUpdated.TenantId);
-            if (_memoryCache.TryGetValue(cacheKey, out ILicensingManagerService licensingManager))
+            if (TryGetValue(licensingDetailsUpdated.TenantId, out var licensingManager))
             {
                 EnsureTenantInSemaphores(licensingDetailsUpdated.TenantId);
                 var licensingManagerSemaphore = _semaphoreSlims[licensingDetailsUpdated.TenantId];
@@ -168,8 +155,8 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
                     await _semaphoreSlim.WaitAsync();
                     try
                     {
-                        _memoryCache.Remove(cacheKey);
-                        SetTenantCache(licensingDetailsUpdated.TenantId, tenantLicensingManager);
+                        TryRemove(licensingDetailsUpdated.TenantId, out _);
+                        TryAdd(licensingDetailsUpdated.TenantId, tenantLicensingManager);
                     }
                     finally
                     {
@@ -188,13 +175,8 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var tenantCatalogDictionary = GetAllCachedTenants();
-                
-                foreach (var tenantId in tenantCatalogDictionary.Keys)
-                {
-                    var cacheKey = GetTenantCacheKey(tenantId);
-                    _memoryCache.Remove(cacheKey);
-                }
+                var tenantCatalogDictionary = this.ToDictionary(catalog => catalog.Key, catalog => catalog.Value);
+                Clear();
                 
                 foreach (var (tenantId, licensingManagerService) in tenantCatalogDictionary)
                 {
@@ -208,8 +190,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
                     var tenantLicensingManager = _licensingManagerServiceFactory.CreateLicensingManagerService(tenantDetails);
                     await tenantLicensingManager.RestoreLicensesInUse(licensesInUse);
                     
-                    var cacheKey = GetTenantCacheKey(tenantId);
-                    SetTenantCache(tenantId, tenantLicensingManager);
+                    TryAdd(tenantId, tenantLicensingManager);
                 }
                 
             }
@@ -267,7 +248,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var tenantCatalogDictionary = GetAllCachedTenants();
+                var tenantCatalogDictionary = this.ToDictionary(catalog => catalog.Key, catalog => catalog.Value);
 
                 var tenantsLicensesUsageInRealTime = tenantCatalogDictionary.Select(l => new LicenseUsageInRealTimeRawData
                     {
@@ -290,9 +271,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var tenantCatalogDictionary = GetAllCachedTenants();
-                
-                foreach (var (tenantId, licensingManager) in tenantCatalogDictionary)
+                foreach (var (tenantId, licensingManager) in this)
                 {
                     //tenant may not be in semaphore if a license 
                     EnsureTenantInSemaphores(tenantId);
@@ -337,17 +316,16 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
         
         private async Task<ILicensingManagerService> GetTenantLicensingManager(Guid tenantId)
         {
-            var cacheKey = GetTenantCacheKey(tenantId);
-            if (_memoryCache.TryGetValue(cacheKey, out ILicensingManagerService tenantLicensingManager)) 
+            if (TryGetValue(tenantId, out var tenantLicensingManager)) 
                 return tenantLicensingManager;
             
             await _semaphoreSlim.WaitAsync();
             try 
             {
                 // This is needed because if two requests of the same tenantId arrive simultaneously, the second one is going to
-                // await on the semaphore, then it will get the object from the cache,
+                // await on the semaphore, then it will get the object from the dictionary,
                 // so it will not execute the method "GetTenantLicensing" twice for the same tenantId.
-                if (_memoryCache.TryGetValue(cacheKey, out ILicensingManagerService tenantLicensingManagerWithinSemaphore)) 
+                if (TryGetValue(tenantId, out var tenantLicensingManagerWithinSemaphore)) 
                     return tenantLicensingManagerWithinSemaphore;
                 
                 var tenantLicensing = await _tenantLicensingService.GetTenantLicensing(tenantId);
@@ -357,7 +335,7 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
 
                 var tenantDetails = new LicenseByTenantId(tenantLicensing);
                 tenantLicensingManager = _licensingManagerServiceFactory.CreateLicensingManagerService(tenantDetails);
-                SetTenantCache(tenantId, tenantLicensingManager);
+                TryAdd(tenantId, tenantLicensingManager);
                 
                 return tenantLicensingManager;
             } 
@@ -373,50 +351,6 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Catalogs
             {
                 var semaphore = new SemaphoreSlim(1, 1);
                 _semaphoreSlims.TryAdd(tenantId, semaphore);
-            }
-        }
-
-        private string GetTenantCacheKey(Guid tenantId)
-        {
-            return $"{LicenseCacheKeyPrefix}{tenantId}";
-        }
-
-        private Dictionary<Guid, ILicensingManagerService> GetAllCachedTenants()
-        {
-            var result = new Dictionary<Guid, ILicensingManagerService>();
-
-            _memoryCache.TryGetValue(TenantsCacheKeyPrefix, out List<Guid> activeTenants);
-
-            if (activeTenants == null)
-                return result;
-
-            foreach (var tenantId in activeTenants)
-            {
-                var cacheKey = GetTenantCacheKey(tenantId);
-                if (_memoryCache.TryGetValue(cacheKey, out ILicensingManagerService tenantLicensingManager))
-                {
-                    result[tenantId] = tenantLicensingManager;
-                }
-
-            }
-                
-            return result;
-        }
-
-        private void SetTenantCache(Guid tenantId, ILicensingManagerService tenantLicensingManager)
-        {
-            var cacheKey = GetTenantCacheKey(tenantId);
-            _memoryCache.Set(cacheKey, tenantLicensingManager);
-            
-            if (!_memoryCache.TryGetValue(TenantsCacheKeyPrefix, out List<Guid> activeTenants))
-            {
-                activeTenants = new List<Guid> { tenantId };
-                _memoryCache.Set(TenantsCacheKeyPrefix, activeTenants);
-            }
-            else if (!activeTenants.Contains(tenantId))
-            {
-                activeTenants.Add(tenantId);
-                _memoryCache.Set(TenantsCacheKeyPrefix, activeTenants);
             }
         }
     }

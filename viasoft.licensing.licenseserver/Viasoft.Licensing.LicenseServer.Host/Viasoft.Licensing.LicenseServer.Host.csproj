@@ -17,23 +17,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Viasoft.Core.API.Administration" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.API.Authentication" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.API.EmailTemplate" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.API.LicensingManagement" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.API.Reporting" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.API.TenantManagement" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.API.UserProfile" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.AspNetCore" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.Emailing" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.Identity.AspNetCore" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.MultiTenancy.AspNetCore" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.ServiceBus.AspNetCore" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.ServiceBus.SQLServer" Version="4.12.40" />
-        <PackageReference Include="Viasoft.Core.WebHost" Version="4.12.40" />
+        <PackageReference Include="Viasoft.Core.API.Administration" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.API.Authentication" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.API.EmailTemplate" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.API.LicensingManagement" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.API.Reporting" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.API.TenantManagement" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.API.UserProfile" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.AspNetCore" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.Identity.AspNetCore" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.MultiTenancy.AspNetCore" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.ServiceBus.AspNetCore" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.ServiceBus.SQLServer" Version="4.8.1" />
+        <PackageReference Include="Viasoft.Core.WebHost" Version="4.8.1" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Viasoft.Licensing.LicenseServer.Domain.Old\Viasoft.Licensing.LicenseServer.Domain.Old.csproj" />
       <ProjectReference Include="..\Viasoft.Licensing.LicenseServer.Domain\Viasoft.Licensing.LicenseServer.Domain.csproj" />
     </ItemGroup>
 

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Viasoft.Core.API.TenantManagement;
 using Viasoft.Core.API.TenantManagement.Model;
 
@@ -12,100 +11,63 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Services.TenantDatabaseMapping;
 
 public class TenantDatabaseMappingTenantManagementProvider : ITenantDatabaseMappingProvider
 {
-    private string SemaphoreSlimKey(Guid tenantId) => $"SemaphoreSlimKey_{tenantId}";
-    private string TenantDatabasesMappingKey(Guid tenantId) => $"TenantDatabasesMappingKey_{tenantId}";
-    
-    private readonly IMemoryCache _memoryCache;
+    private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _semaphoreSlims;
+    private readonly ConcurrentDictionary<Guid, List<string>> _tenantsDatabasesMapping;
     private readonly ITenantManagementApi _tenantManagementApi;
-    
-    public TenantDatabaseMappingTenantManagementProvider(ITenantManagementApi tenantManagementApi, IMemoryCache memoryCache)
+
+    public TenantDatabaseMappingTenantManagementProvider(ITenantManagementApi tenantManagementApi)
     {
         _tenantManagementApi = tenantManagementApi;
-        _memoryCache = memoryCache;
+        _semaphoreSlims = new ConcurrentDictionary<Guid, SemaphoreSlim>();
+        _tenantsDatabasesMapping = new ConcurrentDictionary<Guid, List<string>>();
     }
-    
+
     public async Task<bool> IsTenantMapped(Guid tenantId)
     {
         EnsureTenantInSemaphores(tenantId);
-        var semaphore = GetSemaphoreSlim(tenantId);
-        await semaphore.WaitAsync();
+        var licensingManagerSemaphore = _semaphoreSlims[tenantId];
+        await licensingManagerSemaphore.WaitAsync();
         try
         {
-            return GetTenantDatabaseMapping(tenantId) != null;
+            return _tenantsDatabasesMapping.ContainsKey(tenantId);
         }
         finally
         {
-            semaphore.Release();
+            licensingManagerSemaphore.Release();
         }
     }
-    
+
     public async Task<List<string>> GetTenantDatabases(Guid tenantId)
     {
         EnsureTenantInSemaphores(tenantId);
-        var semaphore = GetSemaphoreSlim(tenantId);
+        var licensingManagerSemaphore = _semaphoreSlims[tenantId];
+
+        if (_tenantsDatabasesMapping.TryGetValue(tenantId, out var result))
+            return result;
         
-        var cachedResult = GetTenantDatabaseMapping(tenantId);
-        if (cachedResult != null)
-            return cachedResult;
-        
-        await semaphore.WaitAsync();
+        await licensingManagerSemaphore.WaitAsync();
         try
         {
-            cachedResult = GetTenantDatabaseMapping(tenantId);
-            if (cachedResult != null)
-                return cachedResult;
+            if (_tenantsDatabasesMapping.TryGetValue(tenantId, out result))
+                return result;
             
-            var result = await GetTenantDatabasesFromTenantId(tenantId);
-            
-            SetTenantDatabaseMapping(tenantId, result);
-            
+            result = await GetTenantDatabasesFromTenantId(tenantId);
+            _tenantsDatabasesMapping.TryAdd(tenantId, result);
             return result;
         }
         finally
         {
-            semaphore.Release();
+            licensingManagerSemaphore.Release();
         }
     }
-    
-    private SemaphoreSlim GetSemaphoreSlim(Guid tenantId)
-    {
-        var cacheObject = _memoryCache.Get(SemaphoreSlimKey(tenantId));
-        return (SemaphoreSlim)cacheObject;
-    }   
-    
-    private List<string> GetTenantDatabaseMapping(Guid tenantId)
-    {
-        var cacheObject = _memoryCache.Get(TenantDatabasesMappingKey(tenantId));
-        return (List<string>)cacheObject;
-    }
-    
-    private void SetTenantDatabaseMapping(Guid tenantId, List<string> databases)
-    {
-        var options = new MemoryCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30),
-            SlidingExpiration = TimeSpan.FromMinutes(10)
-        };
-        
-        _memoryCache.Set(TenantDatabasesMappingKey(tenantId), databases, options);
-    }
-    
+
     private void EnsureTenantInSemaphores(Guid tenantId)
     {
-        var semaphoreKey = SemaphoreSlimKey(tenantId);
-        
-        if (_memoryCache.Get(semaphoreKey) != null)
+        if (_semaphoreSlims.ContainsKey(tenantId))
             return;
-            
+
         var semaphore = new SemaphoreSlim(1, 1);
-        
-        var options = new MemoryCacheEntryOptions
-        {
-            Priority = CacheItemPriority.NeverRemove,
-            Size = 1
-        };
-        
-        _memoryCache.Set(semaphoreKey, semaphore, options);
+        _semaphoreSlims.TryAdd(tenantId, semaphore);
     }
 
     private async Task<List<string>> GetTenantDatabasesFromTenantId(Guid tenantId)

@@ -20,7 +20,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Viasoft.Licensing.LicenseServer.Domain.Services.LicenseServer
 {
-    public class ExternalLicensingManagementService: IExternalLicensingManagementService, ITransientDependency
+    public class ExternalLicensingManagementService: IExternalLicensingManagementService, ISingletonDependency
     {
         private readonly IApiClientCallBuilder _apiClientCallBuilder;
         private readonly IHttpHeaderStrategy _doNothingHttpHeaderStrategy;
@@ -84,7 +84,6 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Services.LicenseServer
             {
                 if (DefaultConfigurationConsts.IsRunningAsLegacy)
                     return await UpdateNamedUserAppLicenseLegacy(input, hostTenantId, licensedTenant, licensedApp, namedUserAppId);
-                    
                 return await UpdateNamedUserAppLicenseWeb(input, hostTenantId, licensedTenant, licensedApp, namedUserAppId);
             }
             catch (Exception e)
@@ -101,7 +100,6 @@ namespace Viasoft.Licensing.LicenseServer.Domain.Services.LicenseServer
             {
                 if (DefaultConfigurationConsts.IsRunningAsLegacy)
                     return await UpdateNamedUserBundleLicenseLegacy(input, hostTenantId, licensedTenant, licensedBundle, namedUserBundleId);
-
                 return await UpdateNamedUserBundleLicenseWeb(input, hostTenantId, licensedTenant, licensedBundle, namedUserBundleId);
             }
             catch (Exception e)

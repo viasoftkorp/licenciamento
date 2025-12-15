@@ -51,4 +51,4 @@ namespace Viasoft.Licensing.LicenseServer.Shared.Consul
             };
         }
     }
-} 
+}

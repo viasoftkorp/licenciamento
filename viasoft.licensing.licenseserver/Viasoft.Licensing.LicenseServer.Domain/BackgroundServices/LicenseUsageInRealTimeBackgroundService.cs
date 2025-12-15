@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,17 +17,20 @@ namespace Viasoft.Licensing.LicenseServer.Domain.BackgroundServices
 {
     public class LicenseUsageInRealTimeBackgroundService: BackgroundService
     {
+        private readonly ITenantCatalog _tenantCatalog;
         private readonly ILicenseServerRepository _licenseServerRepository;
         private readonly ILogger<LicenseUsageInRealTimeBackgroundService> _logger;
+        private readonly IDataUploaderService _dataUploaderService;
         private readonly IConfiguration _configuration;
-        private readonly IServiceProvider _serviceProvider;
 
-        public LicenseUsageInRealTimeBackgroundService(IConfiguration configuration, ILogger<LicenseUsageInRealTimeBackgroundService> logger, ILicenseServerRepository licenseServerRepository, IServiceProvider serviceProvider)
+        public LicenseUsageInRealTimeBackgroundService(IDataUploaderService dataUploaderService,IConfiguration configuration, 
+            ITenantCatalog tenantCatalog, ILogger<LicenseUsageInRealTimeBackgroundService> logger, ILicenseServerRepository licenseServerRepository)
         {
+            _dataUploaderService = dataUploaderService;
             _configuration = configuration;
+            _tenantCatalog = tenantCatalog;
             _logger = logger;
             _licenseServerRepository = licenseServerRepository;
-            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -45,64 +47,59 @@ namespace Viasoft.Licensing.LicenseServer.Domain.BackgroundServices
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await using (var scope = _serviceProvider.CreateAsyncScope())
+                try
                 {
-                    var dataUploaderService = scope.ServiceProvider.GetRequiredService<IDataUploaderService>();
-                    var tenantCatalog = scope.ServiceProvider.GetRequiredService<ITenantCatalog>();
-                    try
+                    var outputs = new List<LicenseUsageInRealTimeOutput>();
+                    var tenantsLicensesUsageInRealTime = await _tenantCatalog.GetTenantsLicensesUsageInRealTime();
+                    
+                    _logger.LogInformation("Got {Count} tenants to report in real time", tenantsLicensesUsageInRealTime.Count);
+                    
+                    foreach (var license in tenantsLicensesUsageInRealTime)
                     {
-                        var outputs = new List<LicenseUsageInRealTimeOutput>();
-                        var tenantsLicensesUsageInRealTime = await tenantCatalog.GetTenantsLicensesUsageInRealTime();
+                        var realTimeOutput = new LicenseUsageInRealTimeOutput(license);
+                        outputs.Add(realTimeOutput);
+                    }
                     
-                        _logger.LogInformation("Got {Count} tenants to report in real time", tenantsLicensesUsageInRealTime.Count);
-                    
-                        foreach (var license in tenantsLicensesUsageInRealTime)
-                        {
-                            var realTimeOutput = new LicenseUsageInRealTimeOutput(license);
-                            outputs.Add(realTimeOutput);
-                        }
-                    
-                        foreach (var newUploadData in outputs)
-                        {
-                            List<string> softwareIdentifierDifference = null;
-                            var lastUploadedData = await _licenseServerRepository.GetLastUploadedLicenseUsageInRealTime(newUploadData.TenantId);
+                    foreach (var newUploadData in outputs)
+                    {
+                        List<string> softwareIdentifierDifference = null;
+                        var lastUploadedData = await _licenseServerRepository.GetLastUploadedLicenseUsageInRealTime(newUploadData.TenantId);
 
-                            if (lastUploadedData != null)
+                        if (lastUploadedData != null)
+                        {
+                            var newUploadDataAsString  = JsonConvert.SerializeObject(newUploadData);
+                            var lastUploadDataAsString = JsonConvert.SerializeObject(lastUploadedData);
+
+                            // If two uploads are the exact same, there is no need to upload the new data.
+                            if (string.Equals(newUploadDataAsString, lastUploadDataAsString, StringComparison.OrdinalIgnoreCase))
                             {
-                                var newUploadDataAsString  = JsonConvert.SerializeObject(newUploadData);
-                                var lastUploadDataAsString = JsonConvert.SerializeObject(lastUploadedData);
-
-                                // If two uploads are the exact same, there is no need to upload the new data.
-                                if (string.Equals(newUploadDataAsString, lastUploadDataAsString, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    _logger.LogInformation("Skipping license usage in real time report because no new licenses were consumed, tenant {TenantId}", newUploadData.TenantId);
-                                    continue;
-                                }
-
-                                softwareIdentifierDifference = lastUploadedData.SoftwareUtilized?.Except(newUploadData.SoftwareUtilized).ToList();
-                                if (softwareIdentifierDifference == null || softwareIdentifierDifference.Any())
-                                {
-                                    // Here we must store the newUploadData only with the SoftwareUtilized it already has.
-                                    await _licenseServerRepository.StoreLastUploadedLicenseUsageInRealTime(newUploadData);
-                                    // But the upload must have the softwareIdentifierDifference too,
-                                    // as it needs to upload the previously used Software, in order to correctly show the licenses usage in real time
-                                    if (softwareIdentifierDifference != null)
-                                        newUploadData.SoftwareUtilized.AddRange(softwareIdentifierDifference);
-                                }
+                                _logger.LogInformation("Skipping license usage in real time report because no new licenses were consumed, tenant {TenantId}", newUploadData.TenantId);
+                                continue;
                             }
 
-                            await dataUploaderService.UploadLicenseUsageInRealTime(newUploadData);
-                            _logger.LogInformation("Reported license usage in real time for tenant {TenantId}", newUploadData.TenantId);
-                        
-                            // If the newUploadData has been stored, we must not store it again.
-                            if (softwareIdentifierDifference == null || !softwareIdentifierDifference.Any())
+                            softwareIdentifierDifference = lastUploadedData.SoftwareUtilized?.Except(newUploadData.SoftwareUtilized).ToList();
+                            if (softwareIdentifierDifference == null || softwareIdentifierDifference.Any())
+                            {
+                                // Here we must store the newUploadData only with the SoftwareUtilized it already has.
                                 await _licenseServerRepository.StoreLastUploadedLicenseUsageInRealTime(newUploadData);
+                                // But the upload must have the softwareIdentifierDifference too,
+                                // as it needs to upload the previously used Software, in order to correctly show the licenses usage in real time
+                                if (softwareIdentifierDifference != null)
+                                    newUploadData.SoftwareUtilized.AddRange(softwareIdentifierDifference);
+                            }
                         }
+
+                        await _dataUploaderService.UploadLicenseUsageInRealTime(newUploadData);
+                        _logger.LogInformation("Reported license usage in real time for tenant {TenantId}", newUploadData.TenantId);
+                        
+                        // If the newUploadData has been stored, we must not store it again.
+                        if (softwareIdentifierDifference == null || !softwareIdentifierDifference.Any())
+                            await _licenseServerRepository.StoreLastUploadedLicenseUsageInRealTime(newUploadData);
                     }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e, "Could not upload license usage in real time");
-                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Could not upload license usage in real time");
                 }
                 await Task.Delay(recurFrequencyInMilliseconds, cancellationToken);
             }

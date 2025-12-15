@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Viasoft.Licensing.LicenseServer.Domain.Catalogs;
@@ -9,15 +8,15 @@ using Viasoft.Licensing.LicenseServer.Shared.Consts;
 
 namespace Viasoft.Licensing.LicenseServer.Domain.BackgroundServices
 {
-    public class RefreshTenantLicensingBackgroundService : BackgroundService
+    public class RefreshTenantLicensingBackgroundService: BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly ITenantCatalog _tenantCatalog;
         private readonly ILogger<RefreshTenantLicensingBackgroundService> _logger;
 
-        public RefreshTenantLicensingBackgroundService(ILogger<RefreshTenantLicensingBackgroundService> logger, IServiceProvider serviceProvider)
+        public RefreshTenantLicensingBackgroundService(ITenantCatalog tenantCatalog, ILogger<RefreshTenantLicensingBackgroundService> logger)
         {
+            _tenantCatalog = tenantCatalog;
             _logger = logger;
-            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,17 +29,13 @@ namespace Viasoft.Licensing.LicenseServer.Domain.BackgroundServices
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await using (var scope = _serviceProvider.CreateAsyncScope())
+                try
                 {
-                    var tenantCatalog = scope.ServiceProvider.GetRequiredService<ITenantCatalog>();
-                    try
-                    {
-                        await tenantCatalog.RefreshAllTenantsLicensing();
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e, "Could not refresh all tenants licensing");
-                    }
+                    await _tenantCatalog.RefreshAllTenantsLicensing();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Could not refresh all tenants licensing");
                 }
                 await Task.Delay(GetTaskDelayToNextExecution(), cancellationToken);
             }
