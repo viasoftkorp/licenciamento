@@ -21,9 +21,9 @@ def data = """ {
         "/p:AutoUpdatePublicKey={{ LS_UPDATE_KEY }}",
         "/p:Authority=https://gateway.korp.com.br/oauth",
         "/p:LicensingManagementSecret={{ LS_LICENSING_SECRET }}",
-        "/p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }}",
-        "githubRepository": "${githubRepo}"
-    ]
+        "/p:CustomerLicensingSecret={{ LS_CUSTOMER_SECRET }}"
+    ],
+    "githubRepository": "${githubRepo}"
 }
 """
 request = httpRequest httpMode: 'POST',
